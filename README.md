@@ -2,7 +2,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Adopt
 
 local window = library:AddWindow("Muscle Legend Adopt", {
     main_color = Color3.fromRGB(64, 64, 64), -- Color
-    min_size = Vector2.new(400, 346), -- Size of the gui
+    min_size = Vector2.new(500, 480), -- Size of the gui
     can_resize = false, -- true or false
 })
 
