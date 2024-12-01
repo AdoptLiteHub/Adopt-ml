@@ -103,7 +103,8 @@ local switch = Killtab:AddSwitch("Auto Kill", function(bool)
     end
 end)
 
-switch:Set(true)
+-- Set initial state to "off"
+switch:Set(false)
 
 -- Whitelist Textbox
 Killtab:AddTextBox("Whitelist", function(text)
@@ -148,7 +149,8 @@ local switchKill = Killtab:AddSwitch("Kill Player", function(bool)
     end
 end)
 
-switchKill:Set(true)
+-- Set initial state to "off"
+switchKill:Set(false)
 
 -- Button to clear the player name written in the textbox
 Killtab:AddButton("Clear Player", function()
@@ -183,4 +185,5 @@ local punchSwitch = Killtab:AddSwitch("Auto Punch", function(bool)
     end
 end)
 
+-- Set initial state to "off"
 punchSwitch:Set(false)
