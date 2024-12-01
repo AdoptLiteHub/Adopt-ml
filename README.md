@@ -494,7 +494,7 @@ SpyTab:AddTextBox("Enter Player Username", function(text)
 end)
 
 -- Adding a toggle to follow the selected player
-local switch = SpyTab:AddSwitch("Follow Player Camera", function(enabled)
+local switch = SpyTab:AddSwitch("Spy Player", function(enabled)
     if enabled and playerToSpyOn then
         local camera = game.Workspace.CurrentCamera
         camera.CameraSubject = playerToSpyOn.Character.HumanoidRootPart
