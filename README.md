@@ -378,6 +378,7 @@ local function createPlayerLabels(player)
     local equippedPets = player:FindFirstChild("equippedPets")
     local ownedGamepasses = player:FindFirstChild("ownedGamepasses")
 
+    -- Create labels for stats
     local labels = {
         StrengthLabel = ViewStatsTab:AddLabel("Strength: " .. abbreviateNumber(leaderstats.Strength.Value or 0)),
         DurabilityLabel = ViewStatsTab:AddLabel("Durability: " .. abbreviateNumber(player.Durability.Value or 0)),
@@ -440,27 +441,66 @@ local function createPlayerLabels(player)
     end)
 end
 
--- Monitor player selection
-game.Players.PlayerAdded:Connect(function(player)
-    if player == currentSelectedPlayer then
-        -- Add player labels when selected
+-- Function to remove player labels (cleanup)
+local function removePlayerLabels(playerName)
+    if playerData[playerName] then
+        for _, label in pairs(playerData[playerName]) do
+            label:Remove()
+        end
+        playerData[playerName] = nil
+    end
+end
+
+-- Adding a textbox for player name input
+local textbox = ViewStatsTab:AddTextBox("Player Name", function(playerName)
+    selectedPlayerName = playerName
+    if notFoundLabel then
+        notFoundLabel:Remove()
+        notFoundLabel = nil
+    end
+
+    local player = game.Players:FindFirstChild(playerName)
+    if player then
+        if currentSelectedPlayer then
+            removePlayerLabels(currentSelectedPlayer)
+        end
         createPlayerLabels(player)
+        currentSelectedPlayer = playerName
+    else
+        notFoundLabel = ViewStatsTab:AddLabel("Player not found!")
     end
 end)
 
 -- Spy Tab
 local SpyTab = window:AddTab("Spy")
-SpyTab:AddButton("Enable Spy", function()
-    local camera = game.Workspace.CurrentCamera
-    camera.CameraSubject = game.Players.LocalPlayer.Character.HumanoidRootPart
-    camera.CameraType = Enum.CameraType.Attach
+
+-- Variable to store the player to spy on
+local playerToSpyOn = nil
+
+-- Adding a textbox to input the player username
+SpyTab:AddTextBox("Enter Player Username", function(text)
+    playerToSpyOn = game.Players:FindFirstChild(text)
+    if playerToSpyOn then
+        print("Player found: " .. playerToSpyOn.Name)
+    else
+        print("Player not found.")
+    end
 end)
 
--- Credits Tab
-local CreditsTab = window:AddTab("Credits")
-CreditsTab:AddLabel("Made by [Your Name]")
-CreditsTab:AddLabel("Special thanks to [Name or Team]")
-CreditsTab:AddLabel("Additional credits to [Names]")
+-- Adding a toggle to follow the selected player
+local switch = SpyTab:AddSwitch("Follow Player Camera", function(enabled)
+    if enabled and playerToSpyOn then
+        local camera = game.Workspace.CurrentCamera
+        camera.CameraSubject = playerToSpyOn.Character.HumanoidRootPart
+        camera.CameraType = Enum.CameraType.Attach
+    else
+        local camera = game.Workspace.CurrentCamera
+        camera.CameraSubject = game.Players.LocalPlayer.Character.HumanoidRootPart
+        camera.CameraType = Enum.CameraType.Custom
+    end
+end)
+
+
 
 -- Show the window
 window:Show()
