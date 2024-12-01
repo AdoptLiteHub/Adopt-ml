@@ -77,6 +77,39 @@ local Killtab = window:AddTab("Kill")
 
 local whitelist = {}
 
+Kill:AddLabel("Auto Punch:")
+
+Killtab:AddButton("Speed Punch", function()
+    local player = game.Players.LocalPlayer
+    local punch = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+    if punch and punch:FindFirstChild("attackTime") then
+        punch.attackTime.Value = 0
+    end
+end)
+
+local AutoPunchToggle = false
+
+Killtab:AddSwitch("Auto Punch", function(State)
+    AutoPunchToggle = State
+    if AutoPunchToggle then
+        spawn(function()
+            while AutoPunchToggle do
+                local player = game.Players.LocalPlayer
+                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+                if tool and tool.Parent ~= player.Character then
+                    tool.Parent = player.Character
+                end
+                if tool then
+                    tool:Activate()
+                end
+                wait(0.01)
+            end
+        end)
+    end
+end)
+
+Kill:AddLabel("Auto Kills:")
+
 Killtab:AddSwitch("Auto Kill", function(bool)
     local teleportHeadsToRightHand = bool
     while teleportHeadsToRightHand do
@@ -127,34 +160,7 @@ Killtab:AddButton("Clear Player", function()
     targetPlayerName = ""
 end)
 
-Killtab:AddButton("Speed Punch", function()
-    local player = game.Players.LocalPlayer
-    local punch = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
-    if punch and punch:FindFirstChild("attackTime") then
-        punch.attackTime.Value = 0
-    end
-end)
 
-local AutoPunchToggle = false
-
-Killtab:AddSwitch("Auto Punch", function(State)
-    AutoPunchToggle = State
-    if AutoPunchToggle then
-        spawn(function()
-            while AutoPunchToggle do
-                local player = game.Players.LocalPlayer
-                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
-                if tool and tool.Parent ~= player.Character then
-                    tool.Parent = player.Character
-                end
-                if tool then
-                    tool:Activate()
-                end
-                wait(0.01)
-            end
-        end)
-    end
-end)
 
 local rebirthAmount = 0
 local currentRebirths = 0
