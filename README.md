@@ -230,6 +230,293 @@ AutoFarmTab:AddSwitch("Auto Weight", function(State)
     end
 end)
 
+AutoFarmTab:AddSwitch("Auto Pushups", function(value)
+    AutoPushupsToggle = value
+    if AutoPushupsToggle then
+        AutoPushups()
+    end
+end)
+
+AutoFarmTab:AddSwitch("Situps", function(value)
+    SitupsToggle = value
+    if SitupsToggle then
+        AutoSitups()
+    end
+end)
+
+AutoFarmTab:AddSwitch("Muscle King Farm", function(value)
+    MuscleKingFarmToggle = value
+    if MuscleKingFarmToggle then
+        MuscleKingFarm()
+    end
+end)
+
+-- Rock Tab
+local RockTab = Window:AddTab("Rock")
+
+-- Tiny Rock Teleport
+RockTab:AddButton("Tiny Rock", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(17.6410236, -1.30998898, 2106.48926)
+end)
+
+-- Frozen Rock Teleport
+RockTab:AddButton("Frozen Rock", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2551.75854, -0.359962642, -243.308777)
+end)
+
+-- Mystic Rock Teleport
+RockTab:AddButton("Mystic Rock", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2186.14111, -0.359961987, 1250.59802)
+end)
+
+-- Inferno Rock Teleport
+RockTab:AddButton("Inferno Rock", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-7262.18701, -0.359961987, -1259.24426)
+end)
+
+-- Legend Rock Teleport
+RockTab:AddButton("Legend Rock", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(4140.41797, 987.453186, -4089.34937)
+end)
+
+-- MuscleKing Rock Teleport
+RockTab:AddButton("Muscle King Rock", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8971.56641, 27.4031715, -6061.27734)
+end)
+
+-- Teleport Tab
+local TeleportTab = Window:AddTab("Teleport")
+
+-- Beach Teleport
+TeleportTab:AddButton("Beach", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-11, 5, -178)
+end)
+
+-- Legends Teleport
+TeleportTab:AddButton("Legends", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(4603, 989, -3898)
+end)
+
+-- Muscle Teleport
+TeleportTab:AddButton("Muscle", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
+end)
+
+-- Tiny Teleport
+TeleportTab:AddButton("Tiny", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-38, 5, 1884)
+end)
+
+-- Secret Teleport
+TeleportTab:AddButton("Secret", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2596, -1, 5738)
+end)
+
+-- Inferno Teleport
+TeleportTab:AddButton("Inferno", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-6759, 5, -1285)
+end)
+
+-- Frost Teleport
+TeleportTab:AddButton("Frost", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2623, 5, -409)
+end)
+
+-- Mythical Teleport
+TeleportTab:AddButton("Mythical", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
+end)
+
+-- View Stats tab
+local ViewStatsTab = Window:AddTab("ViewStats")
+
+local playerData = {}
+local currentSelectedPlayer = nil
+local notFoundLabel = nil
+local selectedPlayerName = nil
+
+local function abbreviateNumber(value)
+    if value >= 1e15 then
+        return string.format("%.1fQa", value / 1e15)
+    elseif value >= 1e12 then
+        return string.format("%.1fT", value / 1e12)
+    elseif value >= 1e9 then
+        return string.format("%.1fB", value / 1e9)
+    elseif value >= 1e6 then
+        return string.format("%.1fM", value / 1e6)
+    elseif value >= 1e3 then
+        return string.format("%.1fK", value / 1e3)
+    else
+        return tostring(value)
+    end
+end
+
+local function createPlayerLabels(player)
+    local playerName = player.Name
+    local leaderstats = player:FindFirstChild("leaderstats")
+    local equippedPets = player:FindFirstChild("equippedPets")
+    local ownedGamepasses = player:FindFirstChild("ownedGamepasses")
+
+    local labels = {
+        StrengthLabel = ViewStatsTab:AddLabel("Strength: " .. abbreviateNumber(leaderstats.Strength.Value or 0)),
+        DurabilityLabel = ViewStatsTab:AddLabel("Durability: " .. abbreviateNumber(player.Durability.Value or 0)),
+        KillsLabel = ViewStatsTab:AddLabel("Kills: " .. abbreviateNumber(leaderstats.Kills.Value or 0)),
+        BrawlsLabel = ViewStatsTab:AddLabel("Brawls: " .. abbreviateNumber(leaderstats.Brawls.Value or 0)),
+        AgilityLabel = ViewStatsTab:AddLabel("Agility: " .. abbreviateNumber(player.Agility.Value or 0)),
+        EvilKarmaLabel = ViewStatsTab:AddLabel("evilKarma: " .. abbreviateNumber(player.evilKarma.Value or 0)),
+        GoodKarmaLabel = ViewStatsTab:AddLabel("goodKarma: " .. abbreviateNumber(player.goodKarma.Value or 0)),
+        MapLabel = ViewStatsTab:AddLabel("Map: " .. (player.currentMap.Value or "N/A")),
+        KingTimeLabel = ViewStatsTab:AddLabel("KingTime: " .. abbreviateNumber(player.muscleKingTime.Value or 0)),
+        PremiumLabel = ViewStatsTab:AddLabel("Premium: " .. (player.MembershipType == Enum.MembershipType.Premium and "true" or "false")),
+    }
+
+    for i = 1, 5 do
+        local petValue = equippedPets:FindFirstChild("pet" .. i) and equippedPets["pet" .. i].Value or "N/A"
+        labels["Pet" .. i .. "Label"] = ViewStatsTab:AddLabel("Pet" .. i .. ": " .. tostring(petValue))
+    end
+
+    local gamepassList = {}
+    if ownedGamepasses then
+        for _, gamepass in ipairs(ownedGamepasses:GetChildren()) do
+            table.insert(gamepassList, gamepass.Name)
+        end
+    end
+
+    local gamepassesText = #gamepassList > 0 and table.concat(gamepassList, ", ") or "N/A"
+    labels.GamepassesLabel = ViewStatsTab:AddLabel("ownedGamepasses: " .. gamepassesText)
+
+    playerData[playerName] = labels
+
+    leaderstats.Kills.Changed:Connect(function()
+        labels.KillsLabel.Text = "Kills: " .. abbreviateNumber(leaderstats.Kills.Value or 0)
+    end)
+
+    leaderstats.Strength.Changed:Connect(function()
+        labels.StrengthLabel.Text = "Strength: " .. abbreviateNumber(leaderstats.Strength.Value or 0)
+    end)
+
+    leaderstats.Brawls.Changed:Connect(function()
+        labels.BrawlsLabel.Text = "Brawls: " .. abbreviateNumber(leaderstats.Brawls.Value or 0)
+    end)
+
+    player.Durability.Changed:Connect(function()
+        labels.DurabilityLabel.Text = "Durability: " .. abbreviateNumber(player.Durability.Value or 0)
+    end)
+
+    player.Agility.Changed:Connect(function()
+        labels.AgilityLabel.Text = "Agility: " .. abbreviateNumber(player.Agility.Value or 0)
+    end)
+
+    player.evilKarma.Changed:Connect(function()
+        labels.EvilKarmaLabel.Text = "evilKarma: " .. abbreviateNumber(player.evilKarma.Value or 0)
+    end)
+
+    player.goodKarma.Changed:Connect(function()
+        labels.GoodKarmaLabel.Text = "goodKarma: " .. abbreviateNumber(player.goodKarma.Value or 0)
+    end)
+
+    player.currentMap.Changed:Connect(function()
+        labels.MapLabel.Text = "Map: " .. (player.currentMap.Value or "N/A")
+    end)
+
+    player.muscleKingTime.Changed:Connect(function()
+        labels.KingTimeLabel.Text = "KingTime: " .. abbreviateNumber(player.muscleKingTime.Value or 0)
+    end)
+end
+
+local function removePlayerLabels(playerName)
+    local labels = playerData[playerName]
+    if labels then
+        for _, label in pairs(labels) do
+            label:Remove()
+        end
+        playerData[playerName] = nil
+    end
+end
+
+local textbox = ViewStatsTab:AddTextBox("Player Name", function(playerName)
+    selectedPlayerName = playerName
+    if notFoundLabel then
+        notFoundLabel:Remove()
+        notFoundLabel = nil
+    end
+
+    local player = game.Players:FindFirstChild(playerName)
+    if player then
+        if currentSelectedPlayer then
+            removePlayerLabels(currentSelectedPlayer)
+        end
+        createPlayerLabels(player)
+        currentSelectedPlayer = playerName
+    else
+        notFoundLabel = ViewStatsTab:AddLabel("Player not found!")
+    end
+end)
+
+
+local SpyTab = Window:AddTab("Spy")
+
+local selectedPlayerName = nil -- To store the player name entered
+local viewingPlayer = false -- To track whether the camera is locked on a player
+
+-- Add TextBox for selecting a player
+SpyTab:AddTextBox("Player Name", function(playerName)
+    selectedPlayerName = playerName
+end)
+
+-- Add toggle to lock/unlock camera view
+SpyTab:AddSwitch("Spy Player", function(bool)
+    local camera = game.Workspace.CurrentCamera
+
+    if bool then
+        -- Enable camera lock
+        if selectedPlayerName then
+            local targetPlayer = game.Players:FindFirstChild(selectedPlayerName)
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                local humanoidRootPart = targetPlayer.Character.HumanoidRootPart
+                viewingPlayer = true -- Enable camera following
+
+                -- Loop to lock camera while the toggle is active
+                while viewingPlayer and bool do
+                    camera.CameraSubject = humanoidRootPart
+                    wait()
+                end
+            end
+        end
+    else
+        -- Disable camera lock and reset to the player's own character
+        viewingPlayer = false
+        camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+    end
+end)
+
+local selectedPlayerForKill = nil -- To store the player name for instant kill
+
+-- Add TextBox for selecting a player for Instant Kill
+SpyTab:AddTextBox("Select Player", function(playerName)
+    selectedPlayerForKill = playerName
+end)
+
+-- Add toggle to teleport the selected player above the void
+SpyTab:AddSwitch("Instant Kill", function(bool)
+    if bool then
+        if selectedPlayerForKill then
+            local targetPlayer = game.Players:FindFirstChild(selectedPlayerForKill)
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                -- Teleport the player 1 stud above the void
+                targetPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, -4999, 0) -- Just above the void
+            end
+        end
+    end
+end)
+
+
+
+-- Credits Tab
+local CreditsTab = Window:AddTab("Credits")
+CreditsTab:AddLabel("Script by Adopt, Cyber and EpicDeevv")
+CreditsTab:AddLabel("Discord: curve0610/kr.1220/cyberivyontop")
+end
 -- More farm methods can be added here in the future
 
 window:Show()
