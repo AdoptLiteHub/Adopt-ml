@@ -271,7 +271,7 @@ AutoFarmTab:AddSwitch("Muscle King Farm", function(value)
 end)
 
 -- Rock Tab
-local RockTab = Window:AddTab("Rock")
+local RockTab = window:AddTab("Rock")
 
 -- Tiny Rock Teleport
 RockTab:AddButton("Tiny Rock", function()
@@ -304,7 +304,7 @@ RockTab:AddButton("Muscle King Rock", function()
 end)
 
 -- Teleport Tab
-local TeleportTab = Window:AddTab("Teleport")
+local TeleportTab = window:AddTab("Teleport")
 
 -- Beach Teleport
 TeleportTab:AddButton("Beach", function()
@@ -346,9 +346,8 @@ TeleportTab:AddButton("Mythical", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
 end)
 
-
 -- View Stats Tab
-local ViewStatsTab = Window:AddTab("ViewStats")
+local ViewStatsTab = window:AddTab("ViewStats")
 
 local playerData = {}
 local currentSelectedPlayer = nil
@@ -439,105 +438,29 @@ local function createPlayerLabels(player)
     player.goodKarma.Changed:Connect(function()
         labels.GoodKarmaLabel.Text = "goodKarma: " .. abbreviateNumber(player.goodKarma.Value or 0)
     end)
-
-    player.currentMap.Changed:Connect(function()
-        labels.MapLabel.Text = "Map: " .. (player.currentMap.Value or "N/A")
-    end)
-
-    player.muscleKingTime.Changed:Connect(function()
-        labels.KingTimeLabel.Text = "KingTime: " .. abbreviateNumber(player.muscleKingTime.Value or 0)
-    end)
 end
 
--- Function to remove the player labels when changing players
-local function removePlayerLabels(playerName)
-    local labels = playerData[playerName]
-    if labels then
-        for _, label in pairs(labels) do
-            label:Remove()
-        end
-        playerData[playerName] = nil
-    end
-end
-
--- Textbox to enter player name for viewing stats
-local textbox = ViewStatsTab:AddTextBox("Player Name", function(playerName)
-    selectedPlayerName = playerName
-    if notFoundLabel then
-        notFoundLabel:Remove()
-        notFoundLabel = nil
-    end
-
-    local player = game.Players:FindFirstChild(playerName)
-    if player then
-        if currentSelectedPlayer then
-            removePlayerLabels(currentSelectedPlayer)
-        end
+-- Monitor player selection
+game.Players.PlayerAdded:Connect(function(player)
+    if player == currentSelectedPlayer then
+        -- Add player labels when selected
         createPlayerLabels(player)
-        currentSelectedPlayer = playerName
-    else
-        notFoundLabel = ViewStatsTab:AddLabel("Player not found!")
     end
 end)
 
 -- Spy Tab
-local SpyTab = Window:AddTab("Spy")
-
--- Textbox for selecting player in Spy Tab
-local viewingPlayer = false
-SpyTab:AddTextBox("Player Name", function(playerName)
-    selectedPlayerName = playerName
-end)
-
--- Add toggle to lock/unlock camera view
-SpyTab:AddSwitch("Spy Player", function(bool)
+local SpyTab = window:AddTab("Spy")
+SpyTab:AddButton("Enable Spy", function()
     local camera = game.Workspace.CurrentCamera
-
-    if bool then
-        -- Enable camera lock
-        if selectedPlayerName then
-            local targetPlayer = game.Players:FindFirstChild(selectedPlayerName)
-            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                local humanoidRootPart = targetPlayer.Character.HumanoidRootPart
-                viewingPlayer = true -- Enable camera following
-
-                -- Loop to lock camera while the toggle is active
-                while viewingPlayer and bool do
-                    camera.CameraSubject = humanoidRootPart
-                    wait()
-                end
-            end
-        end
-    else
-        -- Disable camera lock and reset to the player's own character
-        viewingPlayer = false
-        camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
-    end
-end)
-
--- Select Player for Instant Kill
-local selectedPlayerForKill = nil
-SpyTab:AddTextBox("Select Player", function(playerName)
-    selectedPlayerForKill = playerName
-end)
-
--- Add toggle to teleport selected player above the void
-SpyTab:AddSwitch("Instant Kill", function(bool)
-    if bool then
-        if selectedPlayerForKill then
-            local targetPlayer = game.Players:FindFirstChild(selectedPlayerForKill)
-            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                -- Teleport the player 1 stud above the void
-                targetPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, -4999, 0) -- Just above the void
-            end
-        end
-    end
+    camera.CameraSubject = game.Players.LocalPlayer.Character.HumanoidRootPart
+    camera.CameraType = Enum.CameraType.Attach
 end)
 
 -- Credits Tab
-local CreditsTab = Window:AddTab("Credits")
-CreditsTab:AddLabel("Script by Adopt, Cyber and EpicDeevv")
-CreditsTab:AddLabel("Discord: curve0610/kr.1220/cyberivyontop")
+local CreditsTab = window:AddTab("Credits")
+CreditsTab:AddLabel("Made by [Your Name]")
+CreditsTab:AddLabel("Special thanks to [Name or Team]")
+CreditsTab:AddLabel("Additional credits to [Names]")
 
 -- Show the window
 window:Show()
