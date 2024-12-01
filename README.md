@@ -210,17 +210,36 @@ local MuscleKingFarmToggle = false
 
 -- Helper functions for auto actions
 local function AutoWeight()
-    spawn(function()
-        while AutoWeightToggle do
-            local player = game.Players.LocalPlayer
-            local weightTool = player.Backpack:FindFirstChild("Weight") or player.Character:FindFirstChild("Weight")
-            if weightTool then
-                player.Character.Humanoid:EquipTool(weightTool)
-                weightTool:Activate()
-            end
-            wait(0.1)
+    while AutoWeightToggle do
+        local player = game.Players.LocalPlayer
+        local weightTool = player.Backpack:FindFirstChild("Weight") or player.Character:FindFirstChild("Weight")
+        if weightTool then
+            player.Character.Humanoid:EquipTool(weightTool)
+            weightTool:Activate()
         end
-    end)
+        wait(0.1)
+    end
+end
+
+local function AutoPushups()
+    while AutoPushupsToggle do
+        -- Add your logic for Auto Pushups here
+        wait(0.1)
+    end
+end
+
+local function AutoSitups()
+    while SitupsToggle do
+        -- Add your logic for Auto Situps here
+        wait(0.1)
+    end
+end
+
+local function MuscleKingFarm()
+    while MuscleKingFarmToggle do
+        -- Add your logic for Muscle King Farm here
+        wait(0.1)
+    end
 end
 
 AutoFarmTab:AddSwitch("Auto Weight", function(State)
@@ -327,7 +346,8 @@ TeleportTab:AddButton("Mythical", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
 end)
 
--- View Stats tab
+
+-- View Stats Tab
 local ViewStatsTab = Window:AddTab("ViewStats")
 
 local playerData = {}
@@ -335,6 +355,7 @@ local currentSelectedPlayer = nil
 local notFoundLabel = nil
 local selectedPlayerName = nil
 
+-- Helper function to abbreviate large numbers
 local function abbreviateNumber(value)
     if value >= 1e15 then
         return string.format("%.1fQa", value / 1e15)
@@ -351,6 +372,7 @@ local function abbreviateNumber(value)
     end
 end
 
+-- Function to create labels for the selected player's stats
 local function createPlayerLabels(player)
     local playerName = player.Name
     local leaderstats = player:FindFirstChild("leaderstats")
@@ -370,11 +392,13 @@ local function createPlayerLabels(player)
         PremiumLabel = ViewStatsTab:AddLabel("Premium: " .. (player.MembershipType == Enum.MembershipType.Premium and "true" or "false")),
     }
 
+    -- Add pet labels
     for i = 1, 5 do
         local petValue = equippedPets:FindFirstChild("pet" .. i) and equippedPets["pet" .. i].Value or "N/A"
         labels["Pet" .. i .. "Label"] = ViewStatsTab:AddLabel("Pet" .. i .. ": " .. tostring(petValue))
     end
 
+    -- Add owned gamepasses
     local gamepassList = {}
     if ownedGamepasses then
         for _, gamepass in ipairs(ownedGamepasses:GetChildren()) do
@@ -387,6 +411,7 @@ local function createPlayerLabels(player)
 
     playerData[playerName] = labels
 
+    -- Connect value change events to update the labels
     leaderstats.Kills.Changed:Connect(function()
         labels.KillsLabel.Text = "Kills: " .. abbreviateNumber(leaderstats.Kills.Value or 0)
     end)
@@ -424,6 +449,7 @@ local function createPlayerLabels(player)
     end)
 end
 
+-- Function to remove the player labels when changing players
 local function removePlayerLabels(playerName)
     local labels = playerData[playerName]
     if labels then
@@ -434,6 +460,7 @@ local function removePlayerLabels(playerName)
     end
 end
 
+-- Textbox to enter player name for viewing stats
 local textbox = ViewStatsTab:AddTextBox("Player Name", function(playerName)
     selectedPlayerName = playerName
     if notFoundLabel then
@@ -453,13 +480,11 @@ local textbox = ViewStatsTab:AddTextBox("Player Name", function(playerName)
     end
 end)
 
-
+-- Spy Tab
 local SpyTab = Window:AddTab("Spy")
 
-local selectedPlayerName = nil -- To store the player name entered
-local viewingPlayer = false -- To track whether the camera is locked on a player
-
--- Add TextBox for selecting a player
+-- Textbox for selecting player in Spy Tab
+local viewingPlayer = false
 SpyTab:AddTextBox("Player Name", function(playerName)
     selectedPlayerName = playerName
 end)
@@ -490,14 +515,13 @@ SpyTab:AddSwitch("Spy Player", function(bool)
     end
 end)
 
-local selectedPlayerForKill = nil -- To store the player name for instant kill
-
--- Add TextBox for selecting a player for Instant Kill
+-- Select Player for Instant Kill
+local selectedPlayerForKill = nil
 SpyTab:AddTextBox("Select Player", function(playerName)
     selectedPlayerForKill = playerName
 end)
 
--- Add toggle to teleport the selected player above the void
+-- Add toggle to teleport selected player above the void
 SpyTab:AddSwitch("Instant Kill", function(bool)
     if bool then
         if selectedPlayerForKill then
@@ -510,13 +534,10 @@ SpyTab:AddSwitch("Instant Kill", function(bool)
     end
 end)
 
-
-
 -- Credits Tab
 local CreditsTab = Window:AddTab("Credits")
 CreditsTab:AddLabel("Script by Adopt, Cyber and EpicDeevv")
 CreditsTab:AddLabel("Discord: curve0610/kr.1220/cyberivyontop")
-end
--- More farm methods can be added here in the future
 
+-- Show the window
 window:Show()
