@@ -77,7 +77,7 @@ local Killtab = window:AddTab("Kill")
 
 local whitelist = {}
 
-Kill:AddLabel("Auto Punch:")
+
 
 Killtab:AddButton("Speed Punch", function()
     local player = game.Players.LocalPlayer
@@ -108,7 +108,7 @@ Killtab:AddSwitch("Auto Punch", function(State)
     end
 end)
 
-Kill:AddLabel("Auto Kills:")
+
 
 Killtab:AddSwitch("Auto Kill", function(bool)
     local teleportHeadsToRightHand = bool
