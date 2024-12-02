@@ -9,7 +9,7 @@ local window = library:AddWindow("Muscle Legend Adopt", {
 
 local Maintab = window:AddTab("Main")
 
--- First add the other folders and buttons before the "God Mod" folder
+-- First add the other folders and buttons before the "Muscle King Farming" toggle
 -- Anti Crash Button
 Maintab:AddButton("Anti Crash", function()
     wait(0.5)
@@ -80,26 +80,22 @@ end)
 -- Creating a new folder for OP Farming
 local OPFarmingFolder = Maintab:AddFolder("OP Farming")
 
--- Teleport toggle for infinite teleportation
-local teleportToggleState = false
-OPFarmingFolder:AddToggle("Infinite Teleport", function(state)
-    teleportToggleState = state
-    while teleportToggleState do
+-- Combined toggle for Muscle King Farming
+local muscleKingFarmingState = false
+OPFarmingFolder:AddToggle("Muscle King Farming", function(state)
+    muscleKingFarmingState = state
+    while muscleKingFarmingState do
         -- Teleport to the given position
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
-        wait(0.1)
-    end
-end)
 
--- Toggle for equipping and using the "Weight" tool
-OPFarmingFolder:AddToggle("Equip and Use Weight Tool", function(state)
-    while state do
-        -- Equip "Weight" tool
+        -- Equip "Weight" tool and use it
         local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
         if tool then
             tool.Parent = game.Players.LocalPlayer.Character
             tool:Activate() -- Activating the tool (using it)
         end
+
+        -- Wait a little bit before repeating
         wait(0.1)
     end
 end)
@@ -125,6 +121,20 @@ function toggleFunction(state)
     toggleState = state
 end
 
+
+local Killtab = window:AddTab("Kill")
+
+local whitelist = {}
+
+
+
+Killtab:AddButton("Speed Punch", function()
+    local player = game.Players.LocalPlayer
+    local punch = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+    if punch and punch:FindFirstChild("attackTime") then
+        punch.attackTime.Value = 0
+    end
+end)
 
 
 local AutoPunchToggle = false
