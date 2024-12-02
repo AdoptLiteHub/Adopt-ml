@@ -99,25 +99,20 @@ OPFarmingFolder:AddToggle("Muscle King Farming", function(state)
     end
 end)
 
--- Add the "God Mod" TextBox folder after everything else
+-- Add the "God Mod" Toggle after everything else
+local godModState = false
 local folder = Maintab:AddFolder("God Mod Folder")  -- Added a name for the folder
-local toggleState = false
 
-folder:AddTextBox("God Mod", function(text)
-    if toggleState then
-        while toggleState do
-            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
-            wait(0.1)
-        end
+folder:AddToggle("God Mod", function(state)
+    godModState = state
+    if godModState then
+        -- Activate God Mod (your logic for God Mod)
+        print("God Mod Activated")
     else
-        game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
+        -- Deactivate God Mod
+        print("God Mod Deactivated")
     end
 end)
-
--- Function to toggle the state of toggleState
-function toggleFunction(state)
-    toggleState = state
-end
 
 -- Create folder "Rock Teleports"
 local folder2 = Maintab:AddFolder("Rock Teleports")
@@ -194,6 +189,7 @@ end)
 folder3:AddButton("Mythical", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
 end)
+
 
 
 
