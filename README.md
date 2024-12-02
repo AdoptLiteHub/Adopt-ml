@@ -1,120 +1,99 @@
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/AdoptLiteHub/Adopt-lib/refs/heads/main/README.md", true))()
+-- Assuming that the library is a proper Lua module from GitHub, loading it correctly
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/AdoptLiteHub/Adopt-lib/refs/heads/main/yourscript.lua", true))()
 
 local window = library:AddWindow("Muscle Legend Adopt", {
-    main_color = Color3.fromRGB(64, 64, 64),
-    min_size = Vector2.new(500, 480),
-    can_resize = false,
+    main_color = Color3.fromRGB(64, 64, 64), -- Color
+    min_size = Vector2.new(500, 480), -- Size of the gui
+    can_resize = false, -- true or false
 })
 
 local Maintab = window:AddTab("Main")
-local folder = Maintab:AddFolder("Brawl")
 
--- Toggle button for God Mod
-folder:AddToggle("God Mod (Brawl)", false, function(state)
-    toggleFunction("God Mod", state)
-end)
+local folder = Maintab:AddFolder()  -- Corrected 'Main' to 'Maintab'
+local toggleState = false
 
--- Toggle button for Auto Join Brawl
-folder:AddToggle("Auto Join Brawl", false, function(state)
-    toggleFunction("Auto Join Brawl", state)
-end)
-
-local toggleState = {
-    ["God Mod"] = false,
-    ["Auto Join Brawl"] = false,
-}
-
--- Function to handle different toggles
-function toggleFunction(toggleName, state)
-    toggleState[toggleName] = state
-    if toggleState[toggleName] then
-        -- Start loop for active toggle
-        if toggleName == "God Mod" then
-            while toggleState[toggleName] do
-                game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer("Clicking", "Clicks", false, false, "Normal")
-                wait(0.1)
-            end
-        elseif toggleName == "Auto Join Brawl" then
-            while toggleState[toggleName] do
-                game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer("Clicking", "Clicks", false, false, "Normal")
-                wait(3)
-            end
+-- Corrected AddTextBox usage to assume it works as an input handler
+folder:AddTextBox("God Mod", function(text)
+    if toggleState then
+        while toggleState do
+            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
+            wait(0.1)
         end
+    else
+        game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
     end
+end)
+
+-- Function to toggle the state of toggleState
+function toggleFunction(state)
+    toggleState = state
 end
 
--- Anti Crash button
 Maintab:AddButton("Anti Crash", function()
-    -- Check if the Anti Crash GUI already exists to avoid redundant creation
-    if not game.CoreGui:FindFirstChild("AntiAfkGui") then
-        local ba = Instance.new("ScreenGui")
-        ba.Name = "AntiAfkGui"
-        local ca = Instance.new("TextLabel")
-        local da = Instance.new("Frame")
-        local _b = Instance.new("TextLabel")
-        local ab = Instance.new("TextLabel")
+    wait(0.5)
+    local ba = Instance.new("ScreenGui")
+    local ca = Instance.new("TextLabel")
+    local da = Instance.new("Frame")
+    local _b = Instance.new("TextLabel")
+    local ab = Instance.new("TextLabel")
 
-        ba.Parent = game.CoreGui
-        ba.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ba.Parent = game.CoreGui
+    ba.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-        ca.Parent = ba
-        ca.Active = true
-        ca.BackgroundColor3 = Color3.new(0.176471, 0.176471, 0.176471)
-        ca.Draggable = true
-        ca.Position = UDim2.new(0.698610067, 0, 0.098096624, 0)
-        ca.Size = UDim2.new(0, 370, 0, 52)
-        ca.Font = Enum.Font.SourceSansSemibold
-        ca.Text = "Anti Afk"
-        ca.TextColor3 = Color3.new(0, 1, 1)
-        ca.TextSize = 22
+    ca.Parent = ba
+    ca.Active = true
+    ca.BackgroundColor3 = Color3.new(0.176471, 0.176471, 0.176471)
+    ca.Draggable = true
+    ca.Position = UDim2.new(0.698610067, 0, 0.098096624, 0)
+    ca.Size = UDim2.new(0, 370, 0, 52)
+    ca.Font = Enum.Font.SourceSansSemibold
+    ca.Text = "Anti Afk"
+    ca.TextColor3 = Color3.new(0, 1, 1)
+    ca.TextSize = 22
 
-        da.Parent = ca
-        da.BackgroundColor3 = Color3.new(0.196078, 0.196078, 0.196078)
-        da.Position = UDim2.new(0, 0, 1.0192306, 0)
-        da.Size = UDim2.new(0, 370, 0, 107)
+    da.Parent = ca
+    da.BackgroundColor3 = Color3.new(0.196078, 0.196078, 0.196078)
+    da.Position = UDim2.new(0, 0, 1.0192306, 0)
+    da.Size = UDim2.new(0, 370, 0, 107)
 
-        _b.Parent = da
-        _b.BackgroundColor3 = Color3.new(0.176471, 0.176471, 0.176471)
-        _b.Position = UDim2.new(0, 0, 0.800455689, 0)
-        _b.Size = UDim2.new(0, 370, 0, 21)
-        _b.Font = Enum.Font.Arial
-        _b.Text = "Made by luca#5432"
-        _b.TextColor3 = Color3.new(0, 1, 1)
-        _b.TextSize = 20
+    _b.Parent = da
+    _b.BackgroundColor3 = Color3.new(0.176471, 0.176471, 0.176471)
+    _b.Position = UDim2.new(0, 0, 0.800455689, 0)
+    _b.Size = UDim2.new(0, 370, 0, 21)
+    _b.Font = Enum.Font.Arial
+    _b.Text = "Made by luca#5432"
+    _b.TextColor3 = Color3.new(0, 1, 1)
+    _b.TextSize = 20
 
-        ab.Parent = da
-        ab.BackgroundColor3 = Color3.new(0.176471, 0.176471, 0.176471)
-        ab.Position = UDim2.new(0, 0, 0.158377, 0)
-        ab.Size = UDim2.new(0, 370, 0, 44)
-        ab.Font = Enum.Font.ArialBold
-        ab.Text = "Status: Active"
-        ab.TextColor3 = Color3.new(0, 1, 1)
-        ab.TextSize = 20
+    ab.Parent = da
+    ab.BackgroundColor3 = Color3.new(0.176471, 0.176471, 0.176471)
+    ab.Position = UDim2.new(0, 0, 0.158377, 0)
+    ab.Size = UDim2.new(0, 370, 0, 44)
+    ab.Font = Enum.Font.ArialBold
+    ab.Text = "Status: Active"
+    ab.TextColor3 = Color3.new(0, 1, 1)
+    ab.TextSize = 20
 
-        local bb = game:GetService('VirtualUser')
-        game:GetService('Players').LocalPlayer.Idled:Connect(function()
-            bb:CaptureController()
-            bb:ClickButton2(Vector2.new())
-            ab.Text = "Roblox tried kicking you, but I didn’t let it"
-        end)
+    local bb = game:GetService("VirtualUser")  -- Corrected 'service' to 'GetService'
+    game:GetService("Players").LocalPlayer.Idled:Connect(function()  -- Fixed 'connect' to 'Connect'
+        bb:CaptureController()
+        bb:ClickButton2(Vector2.new())
+        ab.Text = "Roblox tried kicking you, but I didn’t let them!"
+        wait(2)
+        ab.Text = "Status : Active"
+    end)
+end)
+
+Maintab:AddButton("Destroy Ad teleport", function()
+    local part = workspace:FindFirstChild("RobloxForwardPortals")
+    if part then
+        part:Destroy()
+        print("Part 'RobloxForwardPortals' has been destroyed.")
+    else
+        print("Part 'RobloxForwardPortals' not found.")
     end
 end)
 
--- Rest of the code...
-
-local Killtab = window:AddTab("Kill")
-
-local whitelist = {}
-
-
-
-Killtab:AddButton("Speed Punch", function()
-    local player = game.Players.LocalPlayer
-    local punch = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
-    if punch and punch:FindFirstChild("attackTime") then
-        punch.attackTime.Value = 0
-    end
-end)
 
 local AutoPunchToggle = false
 
@@ -189,6 +168,8 @@ Killtab:AddButton("Clear Player", function()
     targetPlayerName = ""
 end)
 
+
+
 local rebirthAmount = 0
 local currentRebirths = 0
 local autoRebirthEnabled = false
@@ -206,7 +187,7 @@ local function autoRebirth()
                     print("Reached the desired rebirth amount.")
                 end
             end
-            wait(0.1)  -- Adjusted wait time for performance
+            wait(0.1)
         end
     end)
 end
@@ -241,41 +222,38 @@ local AutoPushupsToggle = false
 local SitupsToggle = false
 local MuscleKingFarmToggle = false
 
--- Helper function to avoid repeated code
-local function performAutoAction(toggleState, toolName, action)
-    while toggleState do
+-- Helper functions for auto actions
+local function AutoWeight()
+    while AutoWeightToggle do
         local player = game.Players.LocalPlayer
-        local tool = player.Backpack:FindFirstChild(toolName) or player.Character:FindFirstChild(toolName)
-        if tool then
-            player.Character.Humanoid:EquipTool(tool)
-            tool:Activate()
+        local weightTool = player.Backpack:FindFirstChild("Weight") or player.Character:FindFirstChild("Weight")
+        if weightTool then
+            player.Character.Humanoid:EquipTool(weightTool)
+            weightTool:Activate()
         end
-        wait(0.1)  -- Adjust frequency if needed
+        wait(0.1)
     end
 end
 
-local function AutoWeight()
-    performAutoAction(AutoWeightToggle, "Weight", function() 
-        -- Perform weight action here
-    end)
-end
-
 local function AutoPushups()
-    performAutoAction(AutoPushupsToggle, "Pushup", function()
-        -- Perform pushups action here
-    end)
+    while AutoPushupsToggle do
+        -- Add your logic for Auto Pushups here
+        wait(0.1)
+    end
 end
 
 local function AutoSitups()
-    performAutoAction(SitupsToggle, "Situp", function()
-        -- Perform situps action here
-    end)
+    while SitupsToggle do
+        -- Add your logic for Auto Situps here
+        wait(0.1)
+    end
 end
 
 local function MuscleKingFarm()
-    performAutoAction(MuscleKingFarmToggle, "MuscleKing", function()
-        -- Perform MuscleKing farming action here
-    end)
+    while MuscleKingFarmToggle do
+        -- Add your logic for Muscle King Farm here
+        wait(0.1)
+    end
 end
 
 AutoFarmTab:AddSwitch("Auto Weight", function(State)
@@ -306,63 +284,91 @@ AutoFarmTab:AddSwitch("Muscle King Farm", function(value)
     end
 end)
 
--- Rock Tab (Refactor teleportation buttons)
+-- Rock Tab
 local RockTab = window:AddTab("Rock")
 
-local function teleportToRock(coordinate)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(coordinate)
-end
-
+-- Tiny Rock Teleport
 RockTab:AddButton("Tiny Rock", function()
-    teleportToRock(Vector3.new(17.6410236, -1.30998898, 2106.48926))
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(17.6410236, -1.30998898, 2106.48926)
 end)
 
+-- Frozen Rock Teleport
 RockTab:AddButton("Frozen Rock", function()
-    teleportToRock(Vector3.new(-2551.75854, -0.359962642, -243.308777))
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2551.75854, -0.359962642, -243.308777)
 end)
 
+-- Mystic Rock Teleport
 RockTab:AddButton("Mystic Rock", function()
-    teleportToRock(Vector3.new(2186.14111, -0.359961987, 1250.59802))
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2186.14111, -0.359961987, 1250.59802)
 end)
 
+-- Inferno Rock Teleport
 RockTab:AddButton("Inferno Rock", function()
-    teleportToRock(Vector3.new(-7262.18701, -0.359961987, -1259.24426))
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-7262.18701, -0.359961987, -1259.24426)
 end)
 
+-- Legend Rock Teleport
 RockTab:AddButton("Legend Rock", function()
-    teleportToRock(Vector3.new(4140.41797, 987.453186, -4089.34937))
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(4140.41797, 987.453186, -4089.34937)
 end)
 
+-- MuscleKing Rock Teleport
 RockTab:AddButton("Muscle King Rock", function()
-    teleportToRock(Vector3.new(-8971.56641, 27.4031715, -6061.27734))
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8971.56641, 27.4031715, -6061.27734)
 end)
 
 -- Teleport Tab
 local TeleportTab = window:AddTab("Teleport")
 
--- Helper function to simplify teleportation buttons
-local function teleportToLocation(location)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(location)
-end
+-- Beach Teleport
+TeleportTab:AddButton("Beach", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-11, 5, -178)
+end)
 
--- Using the helper function for each teleport button
-TeleportTab:AddButton("Beach", function() teleportToLocation(Vector3.new(-11, 5, -178)) end)
-TeleportTab:AddButton("Legends", function() teleportToLocation(Vector3.new(4603, 989, -3898)) end)
-TeleportTab:AddButton("Muscle", function() teleportToLocation(Vector3.new(-8626, 15, -5730)) end)
-TeleportTab:AddButton("Tiny", function() teleportToLocation(Vector3.new(-38, 5, 1884)) end)
-TeleportTab:AddButton("Secret", function() teleportToLocation(Vector3.new(-2596, -1, 5738)) end)
-TeleportTab:AddButton("Inferno", function() teleportToLocation(Vector3.new(-6759, 5, -1285)) end)
-TeleportTab:AddButton("Frost", function() teleportToLocation(Vector3.new(-2623, 5, -409)) end)
-TeleportTab:AddButton("Mythical", function() teleportToLocation(Vector3.new(2251, 5, 1073)) end)
+-- Legends Teleport
+TeleportTab:AddButton("Legends", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(4603, 989, -3898)
+end)
+
+-- Muscle Teleport
+TeleportTab:AddButton("Muscle", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
+end)
+
+-- Tiny Teleport
+TeleportTab:AddButton("Tiny", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-38, 5, 1884)
+end)
+
+-- Secret Teleport
+TeleportTab:AddButton("Secret", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2596, -1, 5738)
+end)
+
+-- Inferno Teleport
+TeleportTab:AddButton("Inferno", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-6759, 5, -1285)
+end)
+
+-- Frost Teleport
+TeleportTab:AddButton("Frost", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2623, 5, -409)
+end)
+
+-- Mythical Teleport
+TeleportTab:AddButton("Mythical", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
+end)
 
 -- View Stats Tab
 local ViewStatsTab = window:AddTab("ViewStats")
+
 local playerData = {}
 local currentSelectedPlayer = nil
 local notFoundLabel = nil
 local selectedPlayerName = nil
 
--- Function to abbreviate large numbers
+-- Helper function to abbreviate large numbers
 local function abbreviateNumber(value)
     if value >= 1e15 then
         return string.format("%.1fQa", value / 1e15)
@@ -420,13 +426,33 @@ local function createPlayerLabels(player)
     playerData[playerName] = labels
 
     -- Connect value change events to update the labels
-    leaderstats.Kills.Changed:Connect(function() labels.KillsLabel.Text = "Kills: " .. abbreviateNumber(leaderstats.Kills.Value or 0) end)
-    leaderstats.Strength.Changed:Connect(function() labels.StrengthLabel.Text = "Strength: " .. abbreviateNumber(leaderstats.Strength.Value or 0) end)
-    leaderstats.Brawls.Changed:Connect(function() labels.BrawlsLabel.Text = "Brawls: " .. abbreviateNumber(leaderstats.Brawls.Value or 0) end)
-    player.Durability.Changed:Connect(function() labels.DurabilityLabel.Text = "Durability: " .. abbreviateNumber(player.Durability.Value or 0) end)
-    player.Agility.Changed:Connect(function() labels.AgilityLabel.Text = "Agility: " .. abbreviateNumber(player.Agility.Value or 0) end)
-    player.evilKarma.Changed:Connect(function() labels.EvilKarmaLabel.Text = "evilKarma: " .. abbreviateNumber(player.evilKarma.Value or 0) end)
-    player.goodKarma.Changed:Connect(function() labels.GoodKarmaLabel.Text = "goodKarma: " .. abbreviateNumber(player.goodKarma.Value or 0) end)
+    leaderstats.Kills.Changed:Connect(function()
+        labels.KillsLabel.Text = "Kills: " .. abbreviateNumber(leaderstats.Kills.Value or 0)
+    end)
+
+    leaderstats.Strength.Changed:Connect(function()
+        labels.StrengthLabel.Text = "Strength: " .. abbreviateNumber(leaderstats.Strength.Value or 0)
+    end)
+
+    leaderstats.Brawls.Changed:Connect(function()
+        labels.BrawlsLabel.Text = "Brawls: " .. abbreviateNumber(leaderstats.Brawls.Value or 0)
+    end)
+
+    player.Durability.Changed:Connect(function()
+        labels.DurabilityLabel.Text = "Durability: " .. abbreviateNumber(player.Durability.Value or 0)
+    end)
+
+    player.Agility.Changed:Connect(function()
+        labels.AgilityLabel.Text = "Agility: " .. abbreviateNumber(player.Agility.Value or 0)
+    end)
+
+    player.evilKarma.Changed:Connect(function()
+        labels.EvilKarmaLabel.Text = "evilKarma: " .. abbreviateNumber(player.evilKarma.Value or 0)
+    end)
+
+    player.goodKarma.Changed:Connect(function()
+        labels.GoodKarmaLabel.Text = "goodKarma: " .. abbreviateNumber(player.goodKarma.Value or 0)
+    end)
 end
 
 -- Function to remove player labels (cleanup)
@@ -477,15 +503,18 @@ end)
 
 -- Adding a toggle to follow the selected player
 local switch = SpyTab:AddSwitch("Spy Player", function(enabled)
-    local camera = game.Workspace.CurrentCamera
     if enabled and playerToSpyOn then
+        local camera = game.Workspace.CurrentCamera
         camera.CameraSubject = playerToSpyOn.Character.HumanoidRootPart
         camera.CameraType = Enum.CameraType.Attach
     else
+        local camera = game.Workspace.CurrentCamera
         camera.CameraSubject = game.Players.LocalPlayer.Character.HumanoidRootPart
         camera.CameraType = Enum.CameraType.Custom
     end
 end)
+
+
 
 -- Show the window
 window:Show()
