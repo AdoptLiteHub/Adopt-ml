@@ -8,6 +8,24 @@ local window = library:AddWindow("Muscle Legend Adopt", {
 
 local Maintab = window:AddTab("Main")
 
+local folder = Main:AddFolder()
+local toggleState = false
+
+Folder:AddTextBox("God Mod", function(text)
+    if toggleState then
+        while toggleState do
+            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
+            wait(0.1)
+        end
+    else
+        game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
+    end
+end)
+
+function toggleFunction(state)
+    toggleState = state
+end
+
 Maintab:AddButton("Anti Crash", function()
     wait(0.5)
     local ba = Instance.new("ScreenGui")
