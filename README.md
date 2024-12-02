@@ -9,46 +9,38 @@ local window = library:AddWindow("Muscle Legend Adopt", {
 local Maintab = window:AddTab("Main")
 
 local folder = Maintab:AddFolder("Brawl")  -- Corrected the folder assignment to 'Maintab'
-local toggleState = false
 
 -- Toggle button for God Mod
 folder:AddToggle("God Mod (Brawl)", false, function(state)
-    toggleFunction(state)  -- Update the toggle state
+    toggleFunction("God Mod", state)  -- Update the toggle state for God Mod
 end)
 
--- Function to handle God Mod toggle
-function toggleFunction(state)
-    toggleState = state
-    if toggleState then
-        while toggleState do
-            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer("Clicking", "Clicks", false, false, "Normal")
-            wait(0.1)
-        end
-    else
-        -- If toggled off, stop sending requests
-        -- Optionally, you can send a 'stop' signal or break the loop if needed
-    end
-end
-
-
-local toggleState = false
-
--- Toggle button for God Mod
+-- Toggle button for Auto Join Brawl
 folder:AddToggle("Auto Join Brawl", false, function(state)
-    toggleFunction(state)  -- Update the toggle state
+    toggleFunction("Auto Join Brawl", state)  -- Update the toggle state for Auto Join Brawl
 end)
 
--- Function to handle God Mod toggle
-function toggleFunction(state)
-    toggleState = state
-    if toggleState then
-        while toggleState do
-            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer("Clicking", "Clicks", false, false, "Normal")
-            wait(3)
+-- Function to handle different toggles
+local toggleState = {
+    ["God Mod"] = false,
+    ["Auto Join Brawl"] = false,
+}
+
+function toggleFunction(toggleName, state)
+    toggleState[toggleName] = state
+    if toggleState[toggleName] then
+        -- Start loop for active toggle
+        if toggleName == "God Mod" then
+            while toggleState[toggleName] do
+                game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer("Clicking", "Clicks", false, false, "Normal")
+                wait(0.1)  -- Adjust the frequency as needed
+            end
+        elseif toggleName == "Auto Join Brawl" then
+            while toggleState[toggleName] do
+                game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer("Clicking", "Clicks", false, false, "Normal")
+                wait(3)  -- Adjust the frequency as needed
+            end
         end
-    else
-        -- If toggled off, stop sending requests
-        -- Optionally, you can send a 'stop' signal or break the loop if needed
     end
 end
 
@@ -102,7 +94,10 @@ Maintab:AddButton("Anti Crash", function()
     game:service'Players'.LocalPlayer.Idled:connect(function()
         bb:CaptureController()
         bb:ClickButton2(Vector2.new())
-        ab.Text = "Roblox tried kicking you, but I didn’t let
+        ab.Text = "Roblox tried kicking you, but I didn’t let it"
+    end)
+end)
+
 
 
 
