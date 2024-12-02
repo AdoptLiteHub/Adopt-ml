@@ -8,24 +8,51 @@ local window = library:AddWindow("Muscle Legend Adopt", {
 
 local Maintab = window:AddTab("Main")
 
-local folder = Maintab:AddFolder()  -- Corrected the folder assignment to 'Maintab'
+local folder = Maintab:AddFolder("Brawl")  -- Corrected the folder assignment to 'Maintab'
 local toggleState = false
 
-folder:AddTextBox("God Mod", function(text)
+-- Toggle button for God Mod
+folder:AddToggle("God Mod (Brawl)", false, function(state)
+    toggleFunction(state)  -- Update the toggle state
+end)
+
+-- Function to handle God Mod toggle
+function toggleFunction(state)
+    toggleState = state
     if toggleState then
         while toggleState do
-            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
+            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer("Clicking", "Clicks", false, false, "Normal")
             wait(0.1)
         end
     else
-        game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
+        -- If toggled off, stop sending requests
+        -- Optionally, you can send a 'stop' signal or break the loop if needed
     end
-end)
-
-function toggleFunction(state)
-    toggleState = state
 end
 
+
+local toggleState = false
+
+-- Toggle button for God Mod
+folder:AddToggle("Auto Join Brawl", false, function(state)
+    toggleFunction(state)  -- Update the toggle state
+end)
+
+-- Function to handle God Mod toggle
+function toggleFunction(state)
+    toggleState = state
+    if toggleState then
+        while toggleState do
+            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer("Clicking", "Clicks", false, false, "Normal")
+            wait(3)
+        end
+    else
+        -- If toggled off, stop sending requests
+        -- Optionally, you can send a 'stop' signal or break the loop if needed
+    end
+end
+
+-- Anti Crash button
 Maintab:AddButton("Anti Crash", function()
     wait(0.5)
     local ba = Instance.new("ScreenGui")
@@ -75,21 +102,8 @@ Maintab:AddButton("Anti Crash", function()
     game:service'Players'.LocalPlayer.Idled:connect(function()
         bb:CaptureController()
         bb:ClickButton2(Vector2.new())
-        ab.Text = "Roblox tried kicking you, but I didn’t let them!"
-        wait(2)
-        ab.Text = "Status : Active"
-    end)
-end)
+        ab.Text = "Roblox tried kicking you, but I didn’t let
 
-Maintab:AddButton("Destroy Ad teleport", function()
-    local part = workspace:FindFirstChild("RobloxForwardPortals")
-    if part then
-        part:Destroy()
-        print("Part 'RobloxForwardPortals' has been destroyed.")
-    else
-        print("Part 'RobloxForwardPortals' not found.")
-    end
-end)
 
 
 local Killtab = window:AddTab("Kill")
