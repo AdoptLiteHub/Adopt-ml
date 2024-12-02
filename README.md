@@ -8,10 +8,10 @@ local window = library:AddWindow("Muscle Legend Adopt", {
 
 local Maintab = window:AddTab("Main")
 
-local folder = Main:AddFolder()
+local folder = Maintab:AddFolder()  -- Corrected the folder assignment to 'Maintab'
 local toggleState = false
 
-Folder:AddTextBox("God Mod", function(text)
+folder:AddTextBox("God Mod", function(text)
     if toggleState then
         while toggleState do
             game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
@@ -90,6 +90,7 @@ Maintab:AddButton("Destroy Ad teleport", function()
         print("Part 'RobloxForwardPortals' not found.")
     end
 end)
+
 
 local Killtab = window:AddTab("Kill")
 
