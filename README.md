@@ -3,7 +3,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memej
 
 local window = library:AddWindow("Muscle Legend Adopt", {
     main_color = Color3.fromRGB(64, 64, 64), -- Color
-    min_size = Vector2.new(500, 480), -- Size of the gui
+    min_size = Vector2.new(400, 380), -- Size of the gui
     can_resize = false, -- true or false
 })
 
@@ -100,7 +100,7 @@ OPFarmingFolder:AddToggle("Muscle King Farming", function(state)
 end)
 
 -- Add the "God Mod" TextBox folder after everything else
-local folder = Maintab:AddFolder()
+local folder = Maintab:AddFolder("God Mod Folder")  -- Added a name for the folder
 local toggleState = false
 
 folder:AddTextBox("God Mod", function(text)
@@ -194,6 +194,7 @@ end)
 folder3:AddButton("Mythical", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
 end)
+
 
 
 
