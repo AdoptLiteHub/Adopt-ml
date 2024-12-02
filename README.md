@@ -76,43 +76,19 @@ Maintab:AddButton("Destroy Ad teleport", function()
     end
 end)
 
--- Creating a new folder for OP Farming
-local OPFarmingFolder = Maintab:AddFolder("OP Farming")
-
--- Combined toggle for Muscle King Farming
-local muscleKingFarmingState = false
-OPFarmingFolder:AddToggle("Muscle King Farming", function(state)
-    muscleKingFarmingState = state
-    while muscleKingFarmingState do
-        -- Teleport to the given position
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
-
-        -- Equip "Weight" tool and use it
-        local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
-        if tool then
-            tool.Parent = game.Players.LocalPlayer.Character
-            tool:Activate() -- Activating the tool (using it)
-        end
-
-        -- Wait a little bit before repeating
-        wait(0.1)
-    end
-end)
-
--- Add the "God Mod" Toggle after everything else
-local godModState = false
-local folder = Maintab:AddFolder("God Mod Folder")  -- Added a name for the folder
+-- Create folder "Brawl"
+local brawlFolder = Maintab:AddFolder("Brawl")
 
 -- Check if the AddToggle method is supported by folder
-if folder.AddToggle then
-    folder:AddToggle("God Mod", function(state)
+if brawlFolder.AddToggle then
+    brawlFolder:AddToggle("God Mode (Brawl)", function(state)
         godModState = state
         if godModState then
             -- Activate God Mod (your logic for God Mod)
-            print("God Mod Activated")
+            print("God Mod (Brawl) Activated")
         else
             -- Deactivate God Mod
-            print("God Mod Deactivated")
+            print("God Mod (Brawl) Deactivated")
         end
     end)
 else
@@ -152,8 +128,8 @@ folder2:AddButton("Muscle King Rock", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8971.56641, 27.4031715, -6061.27734)
 end)
 
--- Create folder "Islands Teleport"
-local folder3 = Maintab:AddFolder("Islands Teleport")
+-- Create folder "Islands Teleports"
+local folder3 = Maintab:AddFolder("Islands Teleports")
 
 -- Beach Teleport
 folder3:AddButton("Beach", function()
@@ -194,6 +170,30 @@ end)
 folder3:AddButton("Mythical", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
 end)
+
+-- Create folder "OP Farming" (folder4) at the end of the tab
+local folder4 = Maintab:AddFolder("OP Farming")
+
+-- Combined toggle for Muscle King Farming
+local muscleKingFarmingState = false
+folder4:AddToggle("Muscle King Farming", function(state)
+    muscleKingFarmingState = state
+    while muscleKingFarmingState do
+        -- Teleport to the given position
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
+
+        -- Equip "Weight" tool and use it
+        local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
+        if tool then
+            tool.Parent = game.Players.LocalPlayer.Character
+            tool:Activate() -- Activating the tool (using it)
+        end
+
+        -- Wait a little bit before repeating
+        wait(0.1)
+    end
+end)
+
 
 
 
