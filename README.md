@@ -79,21 +79,17 @@ end)
 -- Create folder "Brawl" and add God Mode toggle
 local brawlFolder = Maintab:AddFolder("Brawl")
 
--- Ensure AddToggle method is supported and add the toggle
-if brawlFolder.AddToggle then
-    brawlFolder:AddToggle("God Mode (Brawl)", function(state)
-        godModState = state
-        if godModState then
-            -- Activate God Mod (your logic for God Mod)
-            print("God Mod (Brawl) Activated")
-        else
-            -- Deactivate God Mod
-            print("God Mod (Brawl) Deactivated")
-        end
-    end)
-else
-    print("Error: AddToggle is not supported on this folder object.")
-end
+-- Add the God Mode toggle to the "Brawl" folder
+brawlFolder:AddToggle("God Mode (Brawl)", function(state)
+    local godModState = state
+    if godModState then
+        -- Activate God Mode (your logic for God Mode)
+        print("God Mode (Brawl) Activated")
+    else
+        -- Deactivate God Mode
+        print("God Mode (Brawl) Deactivated")
+    end
+end)
 
 -- Create folder "Rock Teleports"
 local folder2 = Maintab:AddFolder("Rock Teleports")
@@ -171,7 +167,6 @@ folder3:AddButton("Mythical", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
 end)
 
--- Removed the "OP Farming" folder and toggle, as per your request.
 
 
 
