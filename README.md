@@ -3,7 +3,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memej
 
 local window = library:AddWindow("Muscle Legend Adopt", {
     main_color = Color3.fromRGB(64, 64, 64), -- Color
-    min_size = Vector2.new(400, 380), -- Size of the gui
+    min_size = Vector2.new(500, 480), -- Size of the gui
     can_resize = false, -- true or false
 })
 
@@ -103,16 +103,21 @@ end)
 local godModState = false
 local folder = Maintab:AddFolder("God Mod Folder")  -- Added a name for the folder
 
-folder:AddToggle("God Mod", function(state)
-    godModState = state
-    if godModState then
-        -- Activate God Mod (your logic for God Mod)
-        print("God Mod Activated")
-    else
-        -- Deactivate God Mod
-        print("God Mod Deactivated")
-    end
-end)
+-- Check if the AddToggle method is supported by folder
+if folder.AddToggle then
+    folder:AddToggle("God Mod", function(state)
+        godModState = state
+        if godModState then
+            -- Activate God Mod (your logic for God Mod)
+            print("God Mod Activated")
+        else
+            -- Deactivate God Mod
+            print("God Mod Deactivated")
+        end
+    end)
+else
+    print("Error: AddToggle is not supported on this folder object.")
+end
 
 -- Create folder "Rock Teleports"
 local folder2 = Maintab:AddFolder("Rock Teleports")
@@ -189,6 +194,7 @@ end)
 folder3:AddButton("Mythical", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
 end)
+
 
 
 
