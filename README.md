@@ -9,26 +9,8 @@ local window = library:AddWindow("Muscle Legend Adopt", {
 
 local Maintab = window:AddTab("Main")
 
-local folder = Maintab:AddFolder()  -- Corrected 'Main' to 'Maintab'
-local toggleState = false
-
--- Corrected AddTextBox usage to assume it works as an input handler
-folder:AddTextBox("God Mod", function(text)
-    if toggleState then
-        while toggleState do
-            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
-            wait(0.1)
-        end
-    else
-        game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
-    end
-end)
-
--- Function to toggle the state of toggleState
-function toggleFunction(state)
-    toggleState = state
-end
-
+-- First add the other folders and buttons before the "God Mod" folder
+-- Anti Crash Button
 Maintab:AddButton("Anti Crash", function()
     wait(0.5)
     local ba = Instance.new("ScreenGui")
@@ -84,6 +66,7 @@ Maintab:AddButton("Anti Crash", function()
     end)
 end)
 
+-- Destroy Ad teleport Button
 Maintab:AddButton("Destroy Ad teleport", function()
     local part = workspace:FindFirstChild("RobloxForwardPortals")
     if part then
@@ -93,6 +76,55 @@ Maintab:AddButton("Destroy Ad teleport", function()
         print("Part 'RobloxForwardPortals' not found.")
     end
 end)
+
+-- Creating a new folder for OP Farming
+local OPFarmingFolder = Maintab:AddFolder("OP Farming")
+
+-- Teleport toggle for infinite teleportation
+local teleportToggleState = false
+OPFarmingFolder:AddToggle("Infinite Teleport", function(state)
+    teleportToggleState = state
+    while teleportToggleState do
+        -- Teleport to the given position
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
+        wait(0.1)
+    end
+end)
+
+-- Toggle for equipping and using the "Weight" tool
+OPFarmingFolder:AddToggle("Equip and Use Weight Tool", function(state)
+    while state do
+        -- Equip "Weight" tool
+        local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
+        if tool then
+            tool.Parent = game.Players.LocalPlayer.Character
+            tool:Activate() -- Activating the tool (using it)
+        end
+        wait(0.1)
+    end
+end)
+
+-- Add the "God Mod" TextBox folder after everything else
+local folder = Maintab:AddFolder() -- Corrected 'Main' to 'Maintab'
+local toggleState = false
+
+-- Corrected AddTextBox usage to assume it works as an input handler
+folder:AddTextBox("God Mod", function(text)
+    if toggleState then
+        while toggleState do
+            game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
+            wait(0.1)
+        end
+    else
+        game:GetService("ReplicatedStorage").Events.FreeGifts.Gift2:FireServer(text, "Clicks", false, false, "Normal")
+    end
+end)
+
+-- Function to toggle the state of toggleState
+function toggleFunction(state)
+    toggleState = state
+end
+
 
 
 local AutoPunchToggle = false
