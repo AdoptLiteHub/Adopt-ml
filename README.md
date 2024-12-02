@@ -76,10 +76,10 @@ Maintab:AddButton("Destroy Ad teleport", function()
     end
 end)
 
--- Create folder "Brawl"
+-- Create folder "Brawl" and add God Mode toggle
 local brawlFolder = Maintab:AddFolder("Brawl")
 
--- Check if the AddToggle method is supported by folder
+-- Ensure AddToggle method is supported and add the toggle
 if brawlFolder.AddToggle then
     brawlFolder:AddToggle("God Mode (Brawl)", function(state)
         godModState = state
@@ -171,28 +171,8 @@ folder3:AddButton("Mythical", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
 end)
 
--- Create folder "OP Farming" (folder4) at the end of the tab
-local folder4 = Maintab:AddFolder("OP Farming")
+-- Removed the "OP Farming" folder and toggle, as per your request.
 
--- Combined toggle for Muscle King Farming
-local muscleKingFarmingState = false
-folder4:AddToggle("Muscle King Farming", function(state)
-    muscleKingFarmingState = state
-    while muscleKingFarmingState do
-        -- Teleport to the given position
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
-
-        -- Equip "Weight" tool and use it
-        local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
-        if tool then
-            tool.Parent = game.Players.LocalPlayer.Character
-            tool:Activate() -- Activating the tool (using it)
-        end
-
-        -- Wait a little bit before repeating
-        wait(0.1)
-    end
-end)
 
 
 
