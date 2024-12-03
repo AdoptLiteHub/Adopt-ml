@@ -3,7 +3,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memej
 
 local window = library:AddWindow("Muscle Legend Adopt", {
     main_color = Color3.fromRGB(64, 64, 64), -- Color
-    min_size = Vector2.new(440, 410), -- Size of the gui
+    min_size = Vector2.new(360, 360), -- Size of the gui
     can_resize = false, -- true or false
 })
 
@@ -76,20 +76,6 @@ Maintab:AddButton("Destroy Ad teleport", function()
     end
 end)
 
--- Create folder "Brawl" and add God Mode toggle
-local brawlFolder = Maintab:AddFolder("Brawl")
-
--- Add the God Mode toggle to the "Brawl" folder
-brawlFolder:AddToggle("God Mode (Brawl)", function(state)
-    local godModState = state
-    if godModState then
-        -- Activate God Mode (your logic for God Mode)
-        print("God Mode (Brawl) Activated")
-    else
-        -- Deactivate God Mode
-        print("God Mode (Brawl) Deactivated")
-    end
-end)
 
 -- Create folder "Rock Teleports"
 local folder2 = Maintab:AddFolder("Rock Teleports")
@@ -262,6 +248,35 @@ end)
 Killtab:AddButton("Clear Player", function()
     targetPlayerName = ""
 end)
+
+Killtab:AddLabel("--------------")
+
+
+local playerToSpyOn = nil
+
+-- Adding a textbox to input the player username
+Killtab:AddTextBox("Enter Player Username", function(text)
+    playerToSpyOn = game.Players:FindFirstChild(text)
+    if playerToSpyOn then
+        print("Player found: " .. playerToSpyOn.Name)
+    else
+        print("Player not found.")
+    end
+end)
+
+-- Adding a toggle to follow the selected player
+local switch = Killtab:AddSwitch("Spy Player", function(enabled)
+    if enabled and playerToSpyOn then
+        local camera = game.Workspace.CurrentCamera
+        camera.CameraSubject = playerToSpyOn.Character.HumanoidRootPart
+        camera.CameraType = Enum.CameraType.Attach
+    else
+        local camera = game.Workspace.CurrentCamera
+        camera.CameraSubject = game.Players.LocalPlayer.Character.HumanoidRootPart
+        camera.CameraType = Enum.CameraType.Custom
+    end
+end)
+
 
 
 
@@ -505,34 +520,6 @@ local textbox = ViewStatsTab:AddTextBox("Player Name", function(playerName)
     end
 end)
 
--- Spy Tab
-local SpyTab = window:AddTab("Spy")
-
--- Variable to store the player to spy on
-local playerToSpyOn = nil
-
--- Adding a textbox to input the player username
-SpyTab:AddTextBox("Enter Player Username", function(text)
-    playerToSpyOn = game.Players:FindFirstChild(text)
-    if playerToSpyOn then
-        print("Player found: " .. playerToSpyOn.Name)
-    else
-        print("Player not found.")
-    end
-end)
-
--- Adding a toggle to follow the selected player
-local switch = SpyTab:AddSwitch("Spy Player", function(enabled)
-    if enabled and playerToSpyOn then
-        local camera = game.Workspace.CurrentCamera
-        camera.CameraSubject = playerToSpyOn.Character.HumanoidRootPart
-        camera.CameraType = Enum.CameraType.Attach
-    else
-        local camera = game.Workspace.CurrentCamera
-        camera.CameraSubject = game.Players.LocalPlayer.Character.HumanoidRootPart
-        camera.CameraType = Enum.CameraType.Custom
-    end
-end)
 
 
 
