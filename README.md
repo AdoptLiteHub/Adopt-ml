@@ -284,6 +284,38 @@ Killtab:AddSwitch("Auto Kill", function(State)
     end
 end)
 
+-- Initialize variables
+local teleportEnabled = false  -- Keeps track of whether teleportation is enabled
+
+-- Reference to the RunService for Heartbeat
+local RunService = game:GetService("RunService")
+
+-- Function to toggle the teleportation
+Killtab:AddSwitch("Auto Kill 2", function(State)
+    teleportEnabled = State  -- Update the state based on the toggle (True/False)
+end)
+
+-- The teleportation loop
+RunService.Heartbeat:Connect(function()
+    if teleportEnabled then  -- Only teleport players if the toggle is enabled
+        -- Loop through all players in the server
+        for _, player in pairs(game.Players:GetPlayers()) do
+            -- Check if the player has a character and it's loaded
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                -- Check if a model with the player's name exists in Workspace
+                local playerModel = game.Workspace:FindFirstChild(player.Name)
+                if playerModel and playerModel:FindFirstChild("RightHand") then
+                    local rightHand = playerModel.RightHand
+                    -- Teleport the player's HumanoidRootPart to the RightHand's position
+                    humanoidRootPart.CFrame = rightHand.CFrame
+                end
+            end
+        end
+    end
+end)
+
+
 -- Whitelist toggle (Add player to whitelist via chat)
 Killtab:AddTextBox("Whitelist (Player Name)", function(text)
     if text ~= "" then
