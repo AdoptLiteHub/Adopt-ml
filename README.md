@@ -2,8 +2,8 @@
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memejames/elerium-v2-ui-library//main/Library", true))()
 
 local window = library:AddWindow("Muscle Legend Adopt", {
-    main_color = Color3.fromRGB(64, 64, 64), -- Color
-    min_size = Vector2.new(360, 360), -- Size of the gui
+    main_color = Color3.fromRGB(255,0,0), -- Color
+    min_size = Vector2.new(360, 400), -- Size of the gui
     can_resize = false, -- true or false
 })
 
@@ -59,7 +59,7 @@ Maintab:AddButton("Anti Crash", function()
     game:GetService("Players").LocalPlayer.Idled:Connect(function()
         bb:CaptureController()
         bb:ClickButton2(Vector2.new())
-        ab.Text = "Roblox tried kicking you, but I didn’t let them!"
+        ab.Text = "Roblox tried kicking you, but I didnâ€™t let them!"
         wait(2)
         ab.Text = "Status : Active"
     end)
@@ -77,38 +77,8 @@ Maintab:AddButton("Destroy Ad teleport", function()
 end)
 
 
--- Create folder "Rock Teleports"
-local folder2 = Maintab:AddFolder("Rock Teleports")
 
--- Tiny Rock Teleport
-folder2:AddButton("Tiny Rock", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(17.6410236, -1.30998898, 2106.48926)
-end)
 
--- Frozen Rock Teleport
-folder2:AddButton("Frozen Rock", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2551.75854, -0.359962642, -243.308777)
-end)
-
--- Mystic Rock Teleport
-folder2:AddButton("Mystic Rock", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2186.14111, -0.359961987, 1250.59802)
-end)
-
--- Inferno Rock Teleport
-folder2:AddButton("Inferno Rock", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-7262.18701, -0.359961987, -1259.24426)
-end)
-
--- Legend Rock Teleport
-folder2:AddButton("Legend Rock", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(4140.41797, 987.453186, -4089.34937)
-end)
-
--- Muscle King Rock Teleport
-folder2:AddButton("Muscle King Rock", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8971.56641, 27.4031715, -6061.27734)
-end)
 
 -- Create folder "Islands Teleports"
 local folder3 = Maintab:AddFolder("Islands Teleports")
@@ -154,19 +124,17 @@ folder3:AddButton("Mythical", function()
 end)
 
 
-
-
-
-
-
-
-
 local Killtab = window:AddTab("Kill")
-
 local whitelist = {}
+local AutoPunchToggle = false
+local AutoKillToggle = false
+local targetPlayerName = ""
+local teleporting = false
+local playerToSpyOn = nil
+local godModeToggle = false
+local autoEquipPunchToggle = false
 
-
-
+-- Speed Punch (Optional Speed Increase for Punch)
 Killtab:AddButton("Speed Punch", function()
     local player = game.Players.LocalPlayer
     local punch = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
@@ -175,9 +143,29 @@ Killtab:AddButton("Speed Punch", function()
     end
 end)
 
+-- Auto Equip Punch Toggle
+Killtab:AddSwitch("Auto Equip Punch", function(State)
+    autoEquipPunchToggle = State
+    if autoEquipPunchToggle then
+        spawn(function()
+            while autoEquipPunchToggle do
+                local player = game.Players.LocalPlayer
+                -- Equip the Punch tool if it's not already equipped
+                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+                if not tool then
+                    -- Equip the tool to the character if not already equipped
+                    local punchTool = player.Backpack:FindFirstChild("Punch")
+                    if punchTool then
+                        punchTool.Parent = player.Character
+                    end
+                end
+                wait(0.1)  -- Repeat the check every 0.1 seconds
+            end
+        end)
+    end
+end)
 
-local AutoPunchToggle = false
-
+-- Auto Punch Toggle
 Killtab:AddSwitch("Auto Punch", function(State)
     AutoPunchToggle = State
     if AutoPunchToggle then
@@ -191,7 +179,412 @@ Killtab:AddSwitch("Auto Punch", function(State)
                 if tool then
                     tool:Activate()
                 end
-                wait(0.01)
+                wait(0.01)  -- Trigger every 0.01 seconds
+            end
+        end)
+    end
+end)
+
+-- Auto Kill Toggle (Kill Aura)
+Killtab:AddSwitch("Auto Kill", function(State)
+    AutoKillToggle = State
+    if AutoKillToggle then
+        -- Define the global variable to control auto-kill activity
+        _G.autoKillActive = true
+
+        -- Function for auto-kill method 1
+        local function method1()
+            while _G.autoKillActive do
+                wait()
+                local player = game.Players.LocalPlayer
+                if player.muscleEvent then
+                    player.muscleEvent:FireServer("punch", "rightHand")
+                    player.muscleEvent:FireServer("punch", "leftHand")
+
+                    for _, otherPlayer in pairs(game.Players:GetChildren()) do
+                        if otherPlayer.Name ~= player.Name then
+                            local character = game.Workspace:FindFirstChild(otherPlayer.Name)
+                            local localCharacter = game.Workspace:FindFirstChild(player.Name)
+
+                            if character and localCharacter then
+                                local leftHand = localCharacter:FindFirstChild("LeftHand")
+                                if leftHand then
+                                    local head = character:FindFirstChild("Head")
+                                    if head then
+                                        head.CFrame = leftHand.CFrame
+                                    end
+
+                                    for _, descendant in pairs(character:GetDescendants()) do
+                                        if descendant:IsA("BasePart") and descendant.Name == "Handle" then
+                                            descendant.CFrame = leftHand.CFrame
+                                        end
+                                    end
+
+                                    local sweatPart = character:FindFirstChild("sweatPart")
+                                    if sweatPart then
+                                        sweatPart.CFrame = leftHand.CFrame
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Function for auto-kill method 2
+        local function method2()
+            while _G.autoKillActive do
+                wait()
+                local player = game.Players.LocalPlayer
+                if player.muscleEvent then
+                    player.muscleEvent:FireServer("punch", "rightHand")
+                    player.muscleEvent:FireServer("punch", "leftHand")
+
+                    for _, otherPlayer in pairs(game.Players:GetChildren()) do
+                        if otherPlayer.Name ~= player.Name then
+                            local character = game.Workspace:FindFirstChild(otherPlayer.Name)
+                            local localCharacter = game.Workspace:FindFirstChild(player.Name)
+
+                            if character and localCharacter then
+                                local leftHand = localCharacter:FindFirstChild("LeftHand")
+                                if leftHand then
+                                    local head = character:FindFirstChild("Head")
+                                    if head then
+                                        head.Parent = nil
+                                        wait(0.1)
+                                        head.CFrame = leftHand.CFrame
+                                        head.Parent = character
+                                    end
+
+                                    for _, descendant in pairs(character:GetDescendants()) do
+                                        if descendant:IsA("BasePart") and descendant.Name == "Handle" then
+                                            descendant.CFrame = leftHand.CFrame
+                                        end
+                                    end
+
+                                    local sweatPart = character:FindFirstChild("sweatPart")
+                                    if sweatPart then
+                                        sweatPart.CFrame = leftHand.CFrame
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Run both methods concurrently
+        coroutine.wrap(method1)()
+        coroutine.wrap(method2)()
+    else
+        _G.autoKillActive = false
+    end
+end)
+
+-- Whitelist toggle (Add player to whitelist via chat)
+Killtab:AddTextBox("Whitelist (Player Name)", function(text)
+    if text ~= "" then
+        whitelist[text] = true -- Add the player to the whitelist
+        print(text .. " has been added to the whitelist.")
+    else
+        print("Invalid input.")
+    end
+end)
+
+-- Label for Kill Target
+Killtab:AddLabel("Target Player for Kill")
+
+-- Textbox to input the target player names (for Kill Target)
+Killtab:AddTextBox("Target Player", function(text)
+    targetPlayerName = text -- Set the target player name when you input text
+end)
+
+-- Target Kill (This is an extra kill function for targeting a specific player)
+Killtab:AddSwitch("Kill Target", function(State)
+    if State then
+        spawn(function()
+            while true do
+                wait(0.1)  -- You can adjust the rate of this action
+                local targetPlayer = game.Players:FindFirstChild(targetPlayerName)
+                if targetPlayer then
+                    local targetCharacter = targetPlayer.Character
+                    if targetCharacter and targetCharacter:FindFirstChild("Head") then
+                        -- Apply a punch to the target
+                        local muscleEvent = game.Players.LocalPlayer:WaitForChild("muscleEvent")
+                        local argsRight = { [1] = "punch", [2] = "rightHand" }
+                        local argsLeft = { [1] = "punch", [2] = "leftHand" }
+                        muscleEvent:FireServer(unpack(argsRight))  -- Right Hand Punch
+                        muscleEvent:FireServer(unpack(argsLeft))   -- Left Hand Punch
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- Spy Toggle
+Killtab:AddSwitch("Spy", function(State)
+    if State then
+        local player = game.Players.LocalPlayer
+        spawn(function()
+            while true do
+                wait(0.1)  -- Check every 0.1 seconds
+                if playerToSpyOn then
+                    local targetPlayer = game.Players:FindFirstChild(playerToSpyOn)
+                    if targetPlayer and targetPlayer.Character then
+                        -- Teleport the LocalPlayer to the target player's head (or wherever you want)
+                        local targetHead = targetPlayer.Character:FindFirstChild("Head")
+                        if targetHead then
+                            player.Character:MoveTo(targetHead.Position)
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+local Killtab = window:AddTab("Kill")
+local whitelist = {}
+local AutoPunchToggle = false
+local AutoKillToggle = false
+local targetPlayerName = ""
+local teleporting = false
+local playerToSpyOn = nil
+local godModeToggle = false
+local autoEquipPunchToggle = false
+
+-- Speed Punch (Optional Speed Increase for Punch)
+Killtab:AddButton("Speed Punch", function()
+    local player = game.Players.LocalPlayer
+    local punch = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+    if punch and punch:FindFirstChild("attackTime") then
+        punch.attackTime.Value = 0
+    end
+end)
+
+-- Auto Equip Punch Toggle
+Killtab:AddSwitch("Auto Equip Punch", function(State)
+    autoEquipPunchToggle = State
+    if autoEquipPunchToggle then
+        spawn(function()
+            while autoEquipPunchToggle do
+                local player = game.Players.LocalPlayer
+                -- Equip the Punch tool if it's not already equipped
+                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+                if not tool then
+                    -- Equip the tool to the character if not already equipped
+                    local punchTool = player.Backpack:FindFirstChild("Punch")
+                    if punchTool then
+                        punchTool.Parent = player.Character
+                    end
+                end
+                wait(0.1)  -- Repeat the check every 0.1 seconds
+            end
+        end)
+    end
+end)
+
+-- Auto Punch Toggle
+Killtab:AddSwitch("Auto Punch", function(State)
+    AutoPunchToggle = State
+    if AutoPunchToggle then
+        spawn(function()
+            while AutoPunchToggle do
+                local player = game.Players.LocalPlayer
+                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+                if tool and tool.Parent ~= player.Character then
+                    tool.Parent = player.Character
+                end
+                if tool then
+                    tool:Activate()
+                end
+                wait(0.01)  -- Trigger every 0.01 seconds
+            end
+        end)
+    end
+end)
+
+-- Auto Kill Toggle (Kill Aura)
+Killtab:AddSwitch("Auto Kill", function(State)
+    AutoKillToggle = State
+    if AutoKillToggle then
+        -- Define the global variable to control auto-kill activity
+        _G.autoKillActive = true
+
+        -- Function for auto-kill method 1
+        local function method1()
+            while _G.autoKillActive do
+                wait()
+                local player = game.Players.LocalPlayer
+                if player.muscleEvent then
+                    player.muscleEvent:FireServer("punch", "rightHand")
+                    player.muscleEvent:FireServer("punch", "leftHand")
+
+                    for _, otherPlayer in pairs(game.Players:GetChildren()) do
+                        if otherPlayer.Name ~= player.Name then
+                            local character = game.Workspace:FindFirstChild(otherPlayer.Name)
+                            local localCharacter = game.Workspace:FindFirstChild(player.Name)
+
+                            if character and localCharacter then
+                                local leftHand = localCharacter:FindFirstChild("LeftHand")
+                                if leftHand then
+                                    local head = character:FindFirstChild("Head")
+                                    if head then
+                                        head.CFrame = leftHand.CFrame
+                                    end
+
+                                    for _, descendant in pairs(character:GetDescendants()) do
+                                        if descendant:IsA("BasePart") and descendant.Name == "Handle" then
+                                            descendant.CFrame = leftHand.CFrame
+                                        end
+                                    end
+
+                                    local sweatPart = character:FindFirstChild("sweatPart")
+                                    if sweatPart then
+                                        sweatPart.CFrame = leftHand.CFrame
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Function for auto-kill method 2
+        local function method2()
+            while _G.autoKillActive do
+                wait()
+                local player = game.Players.LocalPlayer
+                if player.muscleEvent then
+                    player.muscleEvent:FireServer("punch", "rightHand")
+                    player.muscleEvent:FireServer("punch", "leftHand")
+
+                    for _, otherPlayer in pairs(game.Players:GetChildren()) do
+                        if otherPlayer.Name ~= player.Name then
+                            local character = game.Workspace:FindFirstChild(otherPlayer.Name)
+                            local localCharacter = game.Workspace:FindFirstChild(player.Name)
+
+                            if character and localCharacter then
+                                local leftHand = localCharacter:FindFirstChild("LeftHand")
+                                if leftHand then
+                                    local head = character:FindFirstChild("Head")
+                                    if head then
+                                        head.Parent = nil
+                                        wait(0.1)
+                                        head.CFrame = leftHand.CFrame
+                                        head.Parent = character
+                                    end
+
+                                    for _, descendant in pairs(character:GetDescendants()) do
+                                        if descendant:IsA("BasePart") and descendant.Name == "Handle" then
+                                            descendant.CFrame = leftHand.CFrame
+                                        end
+                                    end
+
+                                    local sweatPart = character:FindFirstChild("sweatPart")
+                                    if sweatPart then
+                                        sweatPart.CFrame = leftHand.CFrame
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Run both methods concurrently
+        coroutine.wrap(method1)()
+        coroutine.wrap(method2)()
+    else
+        _G.autoKillActive = false
+    end
+end)
+
+-- Whitelist toggle (Add player to whitelist via chat)
+Killtab:AddTextBox("Whitelist (Player Name)", function(text)
+    if text ~= "" then
+        whitelist[text] = true -- Add the player to the whitelist
+        print(text .. " has been added to the whitelist.")
+    else
+        print("Invalid input.")
+    end
+end)
+
+-- Label for Kill Target
+Killtab:AddLabel("Target Player for Kill")
+
+-- Textbox to input the target player names (for Kill Target)
+Killtab:AddTextBox("Target Player", function(text)
+    targetPlayerName = text -- Set the target player name when you input text
+end)
+
+-- Kill Target Toggle (Kill only the specified target player)
+Killtab:AddSwitch("Kill Target", function(State)
+    if State then
+        spawn(function()
+            while true do
+                wait(0.1)  -- You can adjust the rate of this action
+                local targetPlayer = game.Players:FindFirstChild(targetPlayerName)
+                if targetPlayer then
+                    local targetCharacter = targetPlayer.Character
+                    if targetCharacter and targetCharacter:FindFirstChild("Head") then
+                        -- Apply a punch to the target
+                        local muscleEvent = game.Players.LocalPlayer:WaitForChild("muscleEvent")
+                        local argsRight = { [1] = "punch", [2] = "rightHand" }
+                        local argsLeft = { [1] = "punch", [2] = "leftHand" }
+                        muscleEvent:FireServer(unpack(argsRight))  -- Right Hand Punch
+                        muscleEvent:FireServer(unpack(argsLeft))   -- Left Hand Punch
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- Spy Toggle
+Killtab:AddSwitch("Spy", function(State)
+    if State then
+        local player = game.Players.LocalPlayer
+        spawn(function()
+            while true do
+                wait(0.1)  -- Check every 0.1 seconds
+                if playerToSpyOn then
+                    local targetPlayer = game.Players:FindFirstChild(playerToSpyOn)
+                    if targetPlayer and targetPlayer.Character then
+                        -- Teleport the LocalPlayer to the target player's head (or wherever you want)
+                        local targetHead = targetPlayer.Character:FindFirstChild("Head")
+                        if targetHead then
+                            player.Character:MoveTo(targetHead.Position)
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- Textbox for Spy target player
+Killtab:AddTextBox("Spy on Player (Name)", function(text)
+    playerToSpyOn = text
+end)
+
+-- God Mode Toggle
+Killtab:AddSwitch("God Mode", function(State)
+    godModeToggle = State
+    if godModeToggle then
+        -- Repeat the joinBrawl event every 0.1 seconds to simulate God Mode
+        spawn(function()
+            while godModeToggle do
+                local args = {
+                    [1] = "joinBrawl"
+                }
+                game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("brawlEvent"):FireServer(unpack(args))
+                wait()  -- Repeat the event every 0.1 seconds
             end
         end)
     end
@@ -199,83 +592,7 @@ end)
 
 
 
-Killtab:AddSwitch("Auto Kill", function(bool)
-    local teleportHeadsToRightHand = bool
-    while teleportHeadsToRightHand do
-        for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-            if player.Character and player.Character:FindFirstChild("Head") then
-                if not whitelist[player.Name] then
-                    local head = player.Character.Head
-                    local rightHand = game.Players.LocalPlayer.Character.RightHand
-                    head.CFrame = rightHand.CFrame * CFrame.new(0, 0, 0)
-                end
-            end
-        end
-        wait(0.1)
-    end
-end)
 
-Killtab:AddTextBox("Whitelist", function(text)
-    whitelist[text] = true
-end)
-
-Killtab:AddButton("Clear Whitelist", function()
-    whitelist = {}
-end)
-
-local targetPlayerName = ""
-local teleporting = false
-
-Killtab:AddTextBox("Write Player Name to kill", function(text)
-    targetPlayerName = text
-end)
-
-Killtab:AddSwitch("Kill Player", function(bool)
-    teleporting = bool
-    while teleporting do
-        if targetPlayerName ~= "" then
-            local targetPlayer = game:GetService("Players"):FindFirstChild(targetPlayerName)
-            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
-                local head = targetPlayer.Character.Head
-                local rightHand = game.Players.LocalPlayer.Character.RightHand
-                head.CFrame = rightHand.CFrame * CFrame.new(0, 0, 0)
-            end
-        end
-        wait(0.1)
-    end
-end)
-
-Killtab:AddButton("Clear Player", function()
-    targetPlayerName = ""
-end)
-
-Killtab:AddLabel("--------------")
-
-
-local playerToSpyOn = nil
-
--- Adding a textbox to input the player username
-Killtab:AddTextBox("Enter Player Username", function(text)
-    playerToSpyOn = game.Players:FindFirstChild(text)
-    if playerToSpyOn then
-        print("Player found: " .. playerToSpyOn.Name)
-    else
-        print("Player not found.")
-    end
-end)
-
--- Adding a toggle to follow the selected player
-local switch = Killtab:AddSwitch("Spy Player", function(enabled)
-    if enabled and playerToSpyOn then
-        local camera = game.Workspace.CurrentCamera
-        camera.CameraSubject = playerToSpyOn.Character.HumanoidRootPart
-        camera.CameraType = Enum.CameraType.Attach
-    else
-        local camera = game.Workspace.CurrentCamera
-        camera.CameraSubject = game.Players.LocalPlayer.Character.HumanoidRootPart
-        camera.CameraType = Enum.CameraType.Custom
-    end
-end)
 
 
 
@@ -325,7 +642,6 @@ RebirthTab:AddTextBox("Select Rebirth Amount", function(text)
     end
 end)
 
--- Auto Farm Tab
 local AutoFarmTab = window:AddTab("Auto Farm")
 local AutoWeightToggle = false
 local AutoPushupsToggle = false
@@ -347,21 +663,36 @@ end
 
 local function AutoPushups()
     while AutoPushupsToggle do
-        -- Add your logic for Auto Pushups here
+        local player = game.Players.LocalPlayer
+        local pushupTool = player.Backpack:FindFirstChild("Pushup") or player.Character:FindFirstChild("Pushup")
+        if pushupTool then
+            player.Character.Humanoid:EquipTool(pushupTool)
+            pushupTool:Activate()
+        end
         wait(0.1)
     end
 end
 
 local function AutoSitups()
     while SitupsToggle do
-        -- Add your logic for Auto Situps here
+        local player = game.Players.LocalPlayer
+        local situpTool = player.Backpack:FindFirstChild("Situp") or player.Character:FindFirstChild("Situp")
+        if situpTool then
+            player.Character.Humanoid:EquipTool(situpTool)
+            situpTool:Activate()
+        end
         wait(0.1)
     end
 end
 
 local function MuscleKingFarm()
     while MuscleKingFarmToggle do
-        -- Add your logic for Muscle King Farm here
+        local player = game.Players.LocalPlayer
+        local muscleKingTool = player.Backpack:FindFirstChild("MuscleKing") or player.Character:FindFirstChild("MuscleKing")
+        if muscleKingTool then
+            player.Character.Humanoid:EquipTool(muscleKingTool)
+            muscleKingTool:Activate()
+        end
         wait(0.1)
     end
 end
@@ -393,6 +724,7 @@ AutoFarmTab:AddSwitch("Muscle King Farm", function(value)
         MuscleKingFarm()
     end
 end)
+
 
 
 -- View Stats Tab
