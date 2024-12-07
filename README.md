@@ -1,8 +1,8 @@
 -- Assuming that the library is a proper Lua module from GitHub, loading it correctly
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/AdoptLiteHub/Adopt-lib/refs/heads/main/README.md", true))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memejames/elerium-v2-ui-library//main/Library", true))()
 
 local window = library:AddWindow("Muscle Legend Adopt", {
-    main_color = Color3.fromRGB(64,64,64), -- Color
+    main_color = Color3.fromRGB(196,40,28), -- Color
     min_size = Vector2.new(360, 400), -- Size of the gui
     can_resize = false, -- true or false
 })
