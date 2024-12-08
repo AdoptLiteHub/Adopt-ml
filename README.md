@@ -329,6 +329,165 @@ end)
 -- Label for Kill Target
 Killtab:AddLabel("Target Player for Kill")
 
+local Killtab = window:AddTab("Kill")
+local whitelist = {}
+local AutoPunchToggle = false
+local AutoKillToggle = false
+local targetPlayerName = ""
+local teleporting = false
+local playerToSpyOn = nil
+local godModeToggle = false
+local autoEquipPunchToggle = false
+
+-- Speed Punch (Optional Speed Increase for Punch)
+Killtab:AddButton("Speed Punch", function()
+    local player = game.Players.LocalPlayer
+    local punch = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+    if punch and punch:FindFirstChild("attackTime") then
+        punch.attackTime.Value = 0
+    end
+end)
+
+-- Auto Equip Punch Toggle
+Killtab:AddSwitch("Auto Equip Punch", function(State)
+    autoEquipPunchToggle = State
+    if autoEquipPunchToggle then
+        task.spawn(function()
+            while autoEquipPunchToggle do
+                local player = game.Players.LocalPlayer
+                -- Equip the Punch tool if it's not already equipped
+                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+                if not tool then
+                    -- Equip the tool to the character if not already equipped
+                    local punchTool = player.Backpack:FindFirstChild("Punch")
+                    if punchTool then
+                        punchTool.Parent = player.Character
+                    end
+                end
+                task.wait(0.1)  -- Repeat the check every 0.1 seconds
+            end
+        end)
+    end
+end)
+
+-- Auto Punch Toggle
+Killtab:AddSwitch("Auto Punch", function(State)
+    AutoPunchToggle = State
+    if AutoPunchToggle then
+        task.spawn(function()
+            while AutoPunchToggle do
+                local player = game.Players.LocalPlayer
+                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+                if tool and tool.Parent ~= player.Character then
+                    tool.Parent = player.Character
+                end
+                if tool then
+                    tool:Activate()
+                end
+                task.wait(0.01)  -- Trigger every 0.01 seconds
+            end
+        end)
+    end
+end)
+
+-- Auto Kill Toggle (Kill Aura)
+Killtab:AddSwitch("Auto Kill", function(State)
+    AutoKillToggle = State
+    if AutoKillToggle then
+        _G.autoKillActive = true
+
+        -- Combined method for Auto Kill
+        local function autoKillMethod()
+            while _G.autoKillActive do
+                task.wait(0.1)
+                local player = game.Players.LocalPlayer
+                if player.muscleEvent then
+                    player.muscleEvent:FireServer("punch", "rightHand")
+                    player.muscleEvent:FireServer("punch", "leftHand")
+
+                    for _, otherPlayer in pairs(game.Players:GetChildren()) do
+                        if otherPlayer.Name ~= player.Name then
+                            local character = game.Workspace:FindFirstChild(otherPlayer.Name)
+                            local localCharacter = game.Workspace:FindFirstChild(player.Name)
+
+                            if character and localCharacter then
+                                local leftHand = localCharacter:FindFirstChild("LeftHand")
+                                if leftHand then
+                                    local head = character:FindFirstChild("Head")
+                                    if head then
+                                        head.Parent = nil
+                                        task.wait(0.1)
+                                        head.CFrame = leftHand.CFrame
+                                        head.Parent = character
+                                    end
+
+                                    for _, descendant in pairs(character:GetDescendants()) do
+                                        if descendant:IsA("BasePart") and descendant.Name == "Handle" then
+                                            descendant.CFrame = leftHand.CFrame
+                                        end
+                                    end
+
+                                    local sweatPart = character:FindFirstChild("sweatPart")
+                                    if sweatPart then
+                                        sweatPart.CFrame = leftHand.CFrame
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Run the autoKill method
+        task.spawn(autoKillMethod)
+    else
+        _G.autoKillActive = false
+    end
+end)
+
+-- Initialize variables
+local teleportEnabled = false  -- Keeps track of whether teleportation is enabled
+local RunService = game:GetService("RunService")
+
+-- Function to toggle the teleportation
+Killtab:AddSwitch("Auto Kill 2", function(State)
+    teleportEnabled = State  -- Update the state based on the toggle (True/False)
+end)
+
+-- The teleportation loop
+RunService.Heartbeat:Connect(function()
+    if teleportEnabled then  -- Only teleport players if the toggle is enabled
+        -- Loop through all players in the server
+        for _, player in pairs(game.Players:GetPlayers()) do
+            -- Check if the player has a character and it's loaded
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                -- Check if a model with the player's name exists in Workspace
+                local playerModel = game.Workspace:FindFirstChild(player.Name)
+                if playerModel and playerModel:FindFirstChild("RightHand") then
+                    local rightHand = playerModel.RightHand
+                    -- Teleport the player's HumanoidRootPart to the RightHand's position
+                    humanoidRootPart.CFrame = rightHand.CFrame
+                end
+            end
+        end
+    end
+end)
+
+-- Whitelist toggle (Add player to whitelist via chat)
+Killtab:AddTextBox("Whitelist (Player Name)", function(text)
+    if text ~= "" then
+        whitelist[text] = true -- Add the player to the whitelist
+        print(text .. " has been added to the whitelist.")
+    else
+        print("Invalid input.")
+    end
+end)
+
+-- Label for Kill Target
+Killtab:AddLabel("Target Player for Kill")
+
 -- Textbox to input the target player names (for Kill Target)
 Killtab:AddTextBox("Target Player", function(text)
     targetPlayerName = text -- Set the target player name when you input text
@@ -337,9 +496,9 @@ end)
 -- Kill Target Toggle (Kill only the specified target player)
 Killtab:AddSwitch("Kill Target", function(State)
     if State then
-        spawn(function()
+        task.spawn(function()
             while true do
-                wait(0.1)  -- You can adjust the rate of this action
+                task.wait(0.1)  -- You can adjust the rate of this action
                 local targetPlayer = game.Players:FindFirstChild(targetPlayerName)
                 if targetPlayer then
                     local targetCharacter = targetPlayer.Character
@@ -361,9 +520,9 @@ end)
 Killtab:AddSwitch("Spy", function(State)
     if State then
         local player = game.Players.LocalPlayer
-        spawn(function()
+        task.spawn(function()
             while true do
-                wait(0.1)  -- Check every 0.1 seconds
+                task.wait(0.1)  -- Check every 0.1 seconds
                 if playerToSpyOn then
                     local targetPlayer = game.Players:FindFirstChild(playerToSpyOn)
                     if targetPlayer and targetPlayer.Character then
@@ -389,17 +548,16 @@ Killtab:AddSwitch("God Mode", function(State)
     godModeToggle = State
     if godModeToggle then
         -- Repeat the joinBrawl event every 0.1 seconds to simulate God Mode
-        spawn(function()
+        task.spawn(function()
             while godModeToggle do
-                local args = {
-                    [1] = "joinBrawl"
-                }
+                local args = { [1] = "joinBrawl" }
                 game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("brawlEvent"):FireServer(unpack(args))
-                wait()  -- Repeat the event every 0.1 seconds
+                task.wait(0.1)  -- Repeat the event every 0.1 seconds
             end
         end)
     end
 end)
+
 
 
 
