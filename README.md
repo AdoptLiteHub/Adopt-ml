@@ -59,9 +59,9 @@ Maintab:AddButton("Anti Crash", function()
     game:GetService("Players").LocalPlayer.Idled:Connect(function()
         bb:CaptureController()
         bb:ClickButton2(Vector2.new())
-        ab.Text = "Roblox tried kicking you, but I didnâ€™t let them!"
+        ab.Text = "Roblox tried kicking you, but I didn’t let them!"  -- Fixed encoding issue
         wait(2)
-        ab.Text = "Status : Active"
+        ab.Text = "Status: Active"
     end)
 end)
 
@@ -76,92 +76,105 @@ Maintab:AddButton("Destroy Ad teleport", function()
     end
 end)
 
-
-
-
-
 -- Create folder "Islands Teleports"
 local folder3 = Maintab:AddFolder("Islands Teleports")
 
 -- Beach Teleport
 folder3:AddButton("Beach", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-11, 5, -178)
+    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-11, 5, -178)
+    end
 end)
 
 -- Legends Teleport
 folder3:AddButton("Legends", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(4603, 989, -3898)
+    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(4603, 989, -3898)
+    end
 end)
 
 -- Muscle Teleport
 folder3:AddButton("Muscle", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
+    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
+    end
 end)
 
 -- Tiny Teleport
 folder3:AddButton("Tiny", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-38, 5, 1884)
+    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-38, 5, 1884)
+    end
 end)
 
 -- Secret Teleport
 folder3:AddButton("Secret", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2596, -1, 5738)
+    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2596, -1, 5738)
+    end
 end)
 
 -- Inferno Teleport
 folder3:AddButton("Inferno", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-6759, 5, -1285)
+    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-6759, 5, -1285)
+    end
 end)
 
 -- Frost Teleport
 folder3:AddButton("Frost", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2623, 5, -409)
+    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2623, 5, -409)
+    end
 end)
 
 -- Mythical Teleport
 folder3:AddButton("Mythical", function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
+    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
+    end
 end)
 
--- Assuming 'Main' and 'folder' are properly defined in your script.
-
-local folder4 = Main:AddFolder("Rock Farming v1")
+-- Rock Farming v1 Section
+local folder4 = Maintab:AddFolder("Rock Farming v1")
 local switch = folder4:AddSwitch("Muscle King Rock", function(bool)
-    if bool then
-        -- Teleport the player to the specified coordinates
-        local player = game.Players.LocalPlayer
-        player.Character:SetPrimaryPartCFrame(CFrame.new(-110.416809, 78.833725, 303.083038, 1, 0, 0, 0, 1, 0, 0, 0, 1))
-        
-        -- Freeze the player by disabling their humanoid
-        local humanoid = player.Character:WaitForChild("Humanoid")
-        humanoid.PlatformStand = true  -- Disable movement
-        
-        -- Equip and use the "Punch" tool infinitely
-        local tool = player.Backpack:FindFirstChild("Punch")
-        if tool then
-            tool.Parent = player.Character -- Equip the tool
-            while bool do
-                -- Use the tool (triggering an action like 'Activate' or 'Use')
-                tool:Activate()  -- Assuming the tool has an 'Activate' method
-                wait(1)  -- Wait a short period before re-triggering the action
+    local player = game.Players.LocalPlayer
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        if bool then
+            -- Teleport the player to the specified coordinates
+            player.Character:SetPrimaryPartCFrame(CFrame.new(-110.416809, 78.833725, 303.083038))
+
+            -- Freeze the player by disabling their humanoid
+            local humanoid = player.Character:WaitForChild("Humanoid")
+            humanoid.PlatformStand = true  -- Disable movement
+
+            -- Equip and use the "Punch" tool infinitely
+            local tool = player.Backpack:FindFirstChild("Punch")
+            if tool then
+                tool.Parent = player.Character  -- Equip the tool
+                while bool do
+                    -- Use the tool (triggering an action like 'Activate' or 'Use')
+                    tool:Activate()  -- Assuming the tool has an 'Activate' method
+                    wait(1)  -- Wait a short period before re-triggering the action
+                end
             end
-        end
-    else
-        -- If the switch is turned off, reset player state
-        local player = game.Players.LocalPlayer
-        local humanoid = player.Character:WaitForChild("Humanoid")
-        humanoid.PlatformStand = false  -- Allow movement again
-        
-        -- Unequip the tool if it's equipped
-        local tool = player.Character:FindFirstChild("Punch")
-        if tool then
-            tool.Parent = player.Backpack -- Move tool back to the backpack
+        else
+            -- If the switch is turned off, reset player state
+            local humanoid = player.Character:WaitForChild("Humanoid")
+            humanoid.PlatformStand = false  -- Allow movement again
+
+            -- Unequip the tool if it's equipped
+            local tool = player.Character:FindFirstChild("Punch")
+            if tool then
+                tool.Parent = player.Backpack  -- Move tool back to the backpack
+            end
         end
     end
 end)
 
 -- Initially set the switch to true (if desired)
 switch:Set(true)
+
 
 
 
