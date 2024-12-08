@@ -443,6 +443,7 @@ local rebirthAmount = 0
 local currentRebirths = 0
 local autoRebirthEnabled = false
 
+-- Create a function for auto rebirth
 local function autoRebirth()
     spawn(function()
         while autoRebirthEnabled do
@@ -461,8 +462,10 @@ local function autoRebirth()
     end)
 end
 
+-- Assuming 'window' is the UI library you're using, and it has an AddTab method
 local RebirthTab = window:AddTab("Rebirth")
 
+-- Add a switch for auto rebirth
 RebirthTab:AddSwitch("Auto Rebirth", {
     Default = false,
     Callback = function(state)
@@ -473,23 +476,25 @@ RebirthTab:AddSwitch("Auto Rebirth", {
     end
 })
 
-Rebirth:AddSwitch("Auto set size 2", function(bool)
-    if bool then
-        -- Start the loop when the switch is turned on
-        while switch:Get() do
-            local args = {
-                [1] = "changeSize",
-                [2] = 2
-            }
-            game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("changeSpeedSizeRemote"):InvokeServer(unpack(args))
-            wait(0.1)  -- Wait for a short period before repeating the action
+-- Define the 'Rebirth' tab switch for auto set size 2
+RebirthTab:AddSwitch("Auto set size 2", {
+    Default = false,
+    Callback = function(bool)
+        if bool then
+            -- Start the loop when the switch is turned on
+            while bool do
+                local args = {
+                    [1] = "changeSize",
+                    [2] = 2
+                }
+                game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("changeSpeedSizeRemote"):InvokeServer(unpack(args))
+                wait(0.1)  -- Wait for a short period before repeating the action
+            end
         end
     end
-end)
+})
 
-switch:Set(true)  -- Set the switch to true initially
-
-
+-- Add a textbox to set the rebirth amount
 RebirthTab:AddTextBox("Select Rebirth Amount", function(text)
     local inputNumber = tonumber(text)
     if inputNumber and inputNumber >= 0 then
@@ -500,6 +505,7 @@ RebirthTab:AddTextBox("Select Rebirth Amount", function(text)
         print("Invalid input. Please enter a positive number.")
     end
 end)
+
 
 local AutoFarmTab = window:AddTab("Auto Farm")
 local AutoWeightToggle = false
