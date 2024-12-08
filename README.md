@@ -183,7 +183,9 @@ local autoEquipPunchToggle = false
 local whitelist = {}  -- Table to store whitelisted player names
 local punchEquipped = false  -- Variable to track whether the "Punch" tool is equipped or not
 local currentKillPlayer = nil  -- Variable to store the player whose model is being 
-local autoKillActive = false 
+local autoKillActive = false
+local originalTransparency = {}  -- Table to store original transparency values
+local originalCanCollide = {}  -- Table to store original CanCollide values
 
 -- Create Whitelist [Player] Textbox
 Killtab:AddTextBox("Whitelist [Player]", function(text)
@@ -230,6 +232,18 @@ Killtab:AddSwitch("Auto Kill ", function(State)
                         if obj:IsA("Model") and game.Players:FindFirstChild(obj.Name) then
                             -- Check if the object is not the local player's character and is not whitelisted
                             if obj.Name ~= player.Name and not whitelist[obj.Name] then
+                                -- Save the original transparency and CanCollide values if they haven't been saved already
+                                if not originalTransparency[obj.Name] then
+                                    originalTransparency[obj.Name] = {}
+                                    originalCanCollide[obj.Name] = {}
+                                    for _, part in pairs(obj:GetDescendants()) do
+                                        if part:IsA("BasePart") then
+                                            originalTransparency[obj.Name][part] = part.Transparency
+                                            originalCanCollide[obj.Name][part] = part.CanCollide
+                                        end
+                                    end
+                                end
+
                                 -- Make the model invisible by setting transparency to 1 and disabling collisions
                                 for _, part in pairs(obj:GetDescendants()) do
                                     if part:IsA("BasePart") then
@@ -253,11 +267,25 @@ Killtab:AddSwitch("Auto Kill ", function(State)
         -- Start the autoKill loop in a coroutine so it runs independently
         coroutine.wrap(autoKill)()
     else
-        -- If AutoKill is turned off, you might want to stop or reset any actions
-        -- For now, the loop will stop automatically due to autoKillActive being set to false
+        -- If AutoKill is turned off, reset transparency and collisions
+        for _, obj in pairs(game.Workspace:GetChildren()) do
+            if obj:IsA("Model") and game.Players:FindFirstChild(obj.Name) and not whitelist[obj.Name] then
+                -- Restore original transparency and CanCollide values
+                if originalTransparency[obj.Name] then
+                    for part, transparency in pairs(originalTransparency[obj.Name]) do
+                        part.Transparency = transparency
+                        part.CanCollide = originalCanCollide[obj.Name][part]
+                    end
+                end
+            end
+        end
+        -- Clear the saved data for next time
+        originalTransparency = {}
+        originalCanCollide = {}
     end
 end)
 
+-- Create Equip Punch Toggle
 Killtab:AddSwitch("Equip Punch", function(State)
     punchEquipped = State  -- Toggle whether the "Punch" tool should be equipped or not
 
@@ -350,8 +378,6 @@ Killtab:AddButton("Speed Punch", function()
     end
 end)
 
-
-
 -- Auto Punch Toggle
 Killtab:AddSwitch("Auto Punch", function(State)
     AutoPunchToggle = State
@@ -371,9 +397,6 @@ Killtab:AddSwitch("Auto Punch", function(State)
         end)
     end
 end)
-
-
-
 
 Killtab:AddLabel("Spy")
 
@@ -407,6 +430,7 @@ Killtab:AddSwitch("Spy", function(State)
         spying = false
     end
 end)
+
 
 
 
