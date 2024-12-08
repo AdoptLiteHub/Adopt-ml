@@ -386,8 +386,9 @@ end)
 Killtab:AddSwitch("Spy", function(State)
     if State then
         local player = game.Players.LocalPlayer
+        local spying = true -- Variable to control the spying state
         task.spawn(function()
-            while true do
+            while spying do
                 task.wait(0.1)  -- Check every 0.1 seconds
                 if playerToSpyOn then
                     local targetPlayer = game.Players:FindFirstChild(playerToSpyOn)
@@ -401,6 +402,9 @@ Killtab:AddSwitch("Spy", function(State)
                 end
             end
         end)
+    else
+        -- Stop spying when toggle is turned off
+        spying = false
     end
 end)
 
