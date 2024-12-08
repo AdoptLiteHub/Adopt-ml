@@ -137,44 +137,38 @@ end)
 
 -- Rock Farming v1 Section
 local folder2 = Maintab:AddFolder("Rock Farming v1")
-local switch = folder2:AddSwitch("Muscle King Rock", function(bool)
-    local player = game.Players.LocalPlayer
-    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        if bool then
-            -- Teleport the player to the specified coordinates
-            player.Character:SetPrimaryPartCFrame(CFrame.new(-8768.96875, 9.1000309, -5863.37402, 1, 0, 0, 0, 1, 0, 0, 0, 1))
+folder2:AddLabel("Coming Soon")
 
-            -- Freeze the player by disabling their humanoid
-            local humanoid = player.Character:WaitForChild("Humanoid")
-            humanoid.PlatformStand = true  -- Disable movement
-
-            -- Equip and use the "Punch" tool infinitely
-            local tool = player.Backpack:FindFirstChild("Punch")
-            if tool then
-                tool.Parent = player.Character  -- Equip the tool
-                while bool do
-                    -- Use the tool (triggering an action like 'Activate' or 'Use')
-                    tool:Activate()  -- Assuming the tool has an 'Activate' method
-                    wait()  -- Wait a short period before re-triggering the action
-                end
+-- Brawl Things
+local folder3 = Maintab:AddFolder("Brawl")
+-- God Mode Toggle
+folder3tab:AddSwitch("God Mode (Brawl)", function(State)
+    godModeToggle = State
+    if godModeToggle then
+        -- Repeat the joinBrawl event every 0.1 seconds to simulate God Mode
+        task.spawn(function()
+            while godModeToggle do
+                local args = { [1] = "joinBrawl" }
+                game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("brawlEvent"):FireServer(unpack(args))
+                task.wait()  -- Repeat the event every 0 seconds
             end
-        else
-            -- If the switch is turned off, reset player state
-            local humanoid = player.Character:WaitForChild("Humanoid")
-            humanoid.PlatformStand = false  -- Allow movement again
-
-            -- Unequip the tool if it's equipped
-            local tool = player.Character:FindFirstChild("Punch")
-            if tool then
-                tool.Parent = player.Backpack  -- Move tool back to the backpack
-            end
-        end
+        end)
     end
 end)
 
-
-
-
+-- God Mode Toggle
+follder3tab:AddSwitch("Auto Join Brawl", function(State)
+    godModeToggle = State
+    if godModeToggle then
+        task.spawn(function()
+            while godModeToggle do
+                local args = { [1] = "joinBrawl" }
+                game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("brawlEvent"):FireServer(unpack(args))
+                task.wait(2)  -- Repeat the event every 2 seconds
+            end
+        end)
+    end
+end)
 
 
 local Killtab = window:AddTab("Kill")
@@ -377,6 +371,15 @@ Killtab:AddSwitch("Auto Punch", function(State)
 end)
 
 
+
+
+Killtab:AddLabel("Spy")
+
+-- Textbox for Spy target player
+Killtab:AddTextBox("Spy on Player (Name)", function(text)
+    playerToSpyOn = text
+end)
+
 -- Spy Toggle
 Killtab:AddSwitch("Spy", function(State)
     if State then
@@ -398,27 +401,6 @@ Killtab:AddSwitch("Spy", function(State)
         end)
     end
 end)
-
--- Textbox for Spy target player
-Killtab:AddTextBox("Spy on Player (Name)", function(text)
-    playerToSpyOn = text
-end)
-
--- God Mode Toggle
-Killtab:AddSwitch("God Mode", function(State)
-    godModeToggle = State
-    if godModeToggle then
-        -- Repeat the joinBrawl event every 0.1 seconds to simulate God Mode
-        task.spawn(function()
-            while godModeToggle do
-                local args = { [1] = "joinBrawl" }
-                game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("brawlEvent"):FireServer(unpack(args))
-                task.wait(0.1)  -- Repeat the event every 0.1 seconds
-            end
-        end)
-    end
-end)
-
 
 
 
