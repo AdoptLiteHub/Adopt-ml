@@ -142,7 +142,7 @@ local switch = folder2:AddSwitch("Muscle King Rock", function(bool)
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         if bool then
             -- Teleport the player to the specified coordinates
-            player.Character:SetPrimaryPartCFrame(CFrame.new(-110.416809, 78.833725, 303.083038))
+            player.Character:SetPrimaryPartCFrame(CFrame.new(-8768.96875, 9.1000309, -5863.37402, 1, 0, 0, 0, 1, 0, 0, 0, 1))
 
             -- Freeze the player by disabling their humanoid
             local humanoid = player.Character:WaitForChild("Humanoid")
@@ -172,8 +172,7 @@ local switch = folder2:AddSwitch("Muscle King Rock", function(bool)
     end
 end)
 
--- Initially set the switch to true (if desired)
-switch:Set(true)
+
 
 
 
