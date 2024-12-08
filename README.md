@@ -249,6 +249,48 @@ Killtab:AddSwitch("Auto Kill", function(State)
     end
 end)
 
+Killtab:AddSwitch("Auto Kill 2", function(State)
+    _G.autoKillActive = State  -- Toggle the state of autoKill
+
+    -- If AutoKill is enabled, start the autoKill process
+    if _G.autoKillActive then
+        local function autoKill()
+            while _G.autoKillActive do
+                wait(0.1)  -- Wait to avoid performance issues
+
+                -- Get the local player and their right hand
+                local player = game.Players.LocalPlayer
+                local character = player.Character
+                local rightHand = character and character:FindFirstChild("RightHand")
+
+                -- Ensure that the right hand exists
+                if rightHand then
+                    -- Iterate through all models in the Workspace
+                    for _, obj in pairs(game.Workspace:GetChildren()) do
+                        -- Check if the object is a model and if its parent is a player (i.e., the model name is a player's username)
+                        if obj:IsA("Model") and game.Players:FindFirstChild(obj.Name) then
+                            -- Check if the object is not the local player's character
+                            if obj.Name ~= player.Name then
+                                -- Teleport the model to the player's right hand
+                                local humanoidRootPart = obj:FindFirstChild("HumanoidRootPart")
+                                if humanoidRootPart then
+                                    humanoidRootPart.CFrame = rightHand.CFrame
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Start the autoKill loop in a coroutine so it runs independently
+        coroutine.wrap(autoKill)()
+    else
+        -- If AutoKill is turned off, you might want to stop or reset any actions
+        -- For now, the loop will stop automatically due to _G.autoKillActive being set to false
+    end
+end)
+
 
 -- Spy Toggle
 Killtab:AddSwitch("Spy", function(State)
