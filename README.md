@@ -77,67 +77,67 @@ Maintab:AddButton("Destroy Ad teleport", function()
 end)
 
 -- Create folder "Islands Teleports"
-local folder3 = Maintab:AddFolder("Islands Teleports")
+local folder = Maintab:AddFolder("Islands Teleports")
 
 -- Beach Teleport
-folder3:AddButton("Beach", function()
+folder:AddButton("Beach", function()
     if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-11, 5, -178)
     end
 end)
 
 -- Legends Teleport
-folder3:AddButton("Legends", function()
+folder:AddButton("Legends", function()
     if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(4603, 989, -3898)
     end
 end)
 
 -- Muscle Teleport
-folder3:AddButton("Muscle", function()
+folder:AddButton("Muscle", function()
     if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-8626, 15, -5730)
     end
 end)
 
 -- Tiny Teleport
-folder3:AddButton("Tiny", function()
+folder:AddButton("Tiny", function()
     if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-38, 5, 1884)
     end
 end)
 
 -- Secret Teleport
-folder3:AddButton("Secret", function()
+folder:AddButton("Secret", function()
     if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2596, -1, 5738)
     end
 end)
 
 -- Inferno Teleport
-folder3:AddButton("Inferno", function()
+folder:AddButton("Inferno", function()
     if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-6759, 5, -1285)
     end
 end)
 
 -- Frost Teleport
-folder3:AddButton("Frost", function()
+folder:AddButton("Frost", function()
     if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-2623, 5, -409)
     end
 end)
 
 -- Mythical Teleport
-folder3:AddButton("Mythical", function()
+folder:AddButton("Mythical", function()
     if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
     end
 end)
 
 -- Rock Farming v1 Section
-local folder4 = Maintab:AddFolder("Rock Farming v1")
-local switch = folder4:AddSwitch("Muscle King Rock", function(bool)
+local folder2 = Maintab:AddFolder("Rock Farming v1")
+local switch = folder2:AddSwitch("Muscle King Rock", function(bool)
     local player = game.Players.LocalPlayer
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         if bool then
@@ -155,7 +155,7 @@ local switch = folder4:AddSwitch("Muscle King Rock", function(bool)
                 while bool do
                     -- Use the tool (triggering an action like 'Activate' or 'Use')
                     tool:Activate()  -- Assuming the tool has an 'Activate' method
-                    wait(1)  -- Wait a short period before re-triggering the action
+                    wait()  -- Wait a short period before re-triggering the action
                 end
             end
         else
