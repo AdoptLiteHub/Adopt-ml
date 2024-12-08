@@ -185,93 +185,8 @@ Killtab:AddSwitch("Auto Punch", function(State)
     end
 end)
 
--- Auto Kill Toggle (Kill Aura)
+
 Killtab:AddSwitch("Auto Kill", function(State)
-    AutoKillToggle = State
-    if AutoKillToggle then
-        _G.autoKillActive = true
-
-        -- Combined method for Auto Kill
-        local function autoKillMethod()
-            while _G.autoKillActive do
-                task.wait(0.1)
-                local player = game.Players.LocalPlayer
-                if player.muscleEvent then
-                    player.muscleEvent:FireServer("punch", "rightHand")
-                    player.muscleEvent:FireServer("punch", "leftHand")
-
-                    for _, otherPlayer in pairs(game.Players:GetChildren()) do
-                        if otherPlayer.Name ~= player.Name then
-                            local character = game.Workspace:FindFirstChild(otherPlayer.Name)
-                            local localCharacter = game.Workspace:FindFirstChild(player.Name)
-
-                            if character and localCharacter then
-                                local leftHand = localCharacter:FindFirstChild("LeftHand")
-                                if leftHand then
-                                    local head = character:FindFirstChild("Head")
-                                    if head then
-                                        head.Parent = nil
-                                        task.wait(0.1)
-                                        head.CFrame = leftHand.CFrame
-                                        head.Parent = character
-                                    end
-
-                                    for _, descendant in pairs(character:GetDescendants()) do
-                                        if descendant:IsA("BasePart") and descendant.Name == "Handle" then
-                                            descendant.CFrame = leftHand.CFrame
-                                        end
-                                    end
-
-                                    local sweatPart = character:FindFirstChild("sweatPart")
-                                    if sweatPart then
-                                        sweatPart.CFrame = leftHand.CFrame
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
-        -- Run the autoKill method
-        task.spawn(autoKillMethod)
-    else
-        _G.autoKillActive = false
-    end
-end)
-
--- Initialize variables
-local teleportEnabled = false  -- Keeps track of whether teleportation is enabled
-local RunService = game:GetService("RunService")
-
--- Function to toggle the teleportation
-Killtab:AddSwitch("Auto Kill 2", function(State)
-    teleportEnabled = State  -- Update the state based on the toggle (True/False)
-end)
-
--- The teleportation loop
-RunService.Heartbeat:Connect(function()
-    if teleportEnabled then  -- Only teleport players if the toggle is enabled
-        -- Loop through all players in the server
-        for _, player in pairs(game.Players:GetPlayers()) do
-            -- Check if the player has a character and it's loaded
-            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
-                -- Check if a model with the player's name exists in Workspace
-                local playerModel = game.Workspace:FindFirstChild(player.Name)
-                if playerModel and playerModel:FindFirstChild("RightHand") then
-                    local rightHand = playerModel.RightHand
-                    -- Teleport the player's HumanoidRootPart to the RightHand's position
-                    humanoidRootPart.CFrame = rightHand.CFrame
-                end
-            end
-        end
-    end
-end)
-
--- Add the toggle switch for Auto Kill in your GUI (e.g., Killtab)
-Killtab:AddSwitch("Auto Kill 3", function(State)
     _G.autoKillActive = State  -- Toggle the state of autoKill
 
     -- If AutoKill is enabled, start the autoKill process
@@ -280,7 +195,8 @@ Killtab:AddSwitch("Auto Kill 3", function(State)
             while _G.autoKillActive do
                 wait(0.1)
                 local player = game.Players.LocalPlayer
-                if player.muscleEvent then
+                if player and player.muscleEvent then
+                    -- Fire the muscleEvent for punches
                     player.muscleEvent:FireServer("punch", "rightHand")
                     player.muscleEvent:FireServer("punch", "leftHand")
 
@@ -291,6 +207,7 @@ Killtab:AddSwitch("Auto Kill 3", function(State)
                             if character then
                                 makeInvisible(character)
 
+                                -- Ensure character parts exist before trying to manipulate them
                                 local leftHand = player.Character and player.Character:FindFirstChild("LeftHand")
                                 if leftHand then
                                     local head = character:FindFirstChild("Head")
@@ -298,12 +215,14 @@ Killtab:AddSwitch("Auto Kill 3", function(State)
                                         head.CFrame = leftHand.CFrame
                                     end
 
+                                    -- Set Handle parts' CFrame to LeftHand CFrame
                                     for _, descendant in pairs(character:GetDescendants()) do
                                         if descendant:IsA("BasePart") and descendant.Name == "Handle" then
                                             descendant.CFrame = leftHand.CFrame
                                         end
                                     end
 
+                                    -- Adjust sweatPart's CFrame if it exists
                                     local sweatPart = character:FindFirstChild("sweatPart")
                                     if sweatPart then
                                         sweatPart.CFrame = leftHand.CFrame
@@ -325,6 +244,8 @@ Killtab:AddSwitch("Auto Kill 3", function(State)
         if localCharacter then
             makeVisible(localCharacter)
         end
+
+        -- Consider adding cleanup if necessary (e.g., reset any altered states)
     end
 end)
 
