@@ -141,8 +141,9 @@ folder2:AddLabel("Coming Soon")
 
 -- Brawl Things
 local folder3 = Maintab:AddFolder("Brawl")
+
 -- God Mode Toggle
-folder3tab:AddSwitch("God Mode (Brawl)", function(State)
+folder3:AddSwitch("God Mode (Brawl)", function(State)
     godModeToggle = State
     if godModeToggle then
         -- Repeat the joinBrawl event every 0.1 seconds to simulate God Mode
@@ -156,8 +157,8 @@ folder3tab:AddSwitch("God Mode (Brawl)", function(State)
     end
 end)
 
--- God Mode Toggle
-follder3tab:AddSwitch("Auto Join Brawl", function(State)
+-- Auto Join Brawl
+folder3:AddSwitch("Auto Join Brawl", function(State)
     godModeToggle = State
     if godModeToggle then
         task.spawn(function()
@@ -169,6 +170,7 @@ follder3tab:AddSwitch("Auto Join Brawl", function(State)
         end)
     end
 end)
+
 
 
 local Killtab = window:AddTab("Kill")
@@ -205,8 +207,8 @@ Killtab:AddTextBox("Unwhitelist [Player]", function(text)
     end
 end)
 
--- Create Auto Kill 2 Toggle
-Killtab:AddSwitch("Auto Kill 2", function(State)
+-- Create Auto Kill Toggle
+Killtab:AddSwitch("Auto Kill ", function(State)
     autoKillActive = State  -- Toggle the state of autoKill
 
     -- If AutoKill is enabled, start the autoKill process
