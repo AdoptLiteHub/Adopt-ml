@@ -125,137 +125,47 @@ end)
 
 
 local Killtab = window:AddTab("Kill")
-local whitelist = {}
 local AutoPunchToggle = false
-local AutoKillToggle = false
 local targetPlayerName = ""
 local teleporting = false
 local playerToSpyOn = nil
 local godModeToggle = false
 local autoEquipPunchToggle = false
+local whitelist = {}  -- Table to store whitelisted player names
+local punchEquipped = false  -- Variable to track whether the "Punch" tool is equipped or not
+local currentKillPlayer = nil  -- Variable to store the player whose model is being 
+local autoKillActive = false 
 
--- Speed Punch (Optional Speed Increase for Punch)
-Killtab:AddButton("Speed Punch", function()
-    local player = game.Players.LocalPlayer
-    local punch = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
-    if punch and punch:FindFirstChild("attackTime") then
-        punch.attackTime.Value = 0
-    end
-end)
-
--- Auto Equip Punch Toggle
-Killtab:AddSwitch("Auto Equip Punch", function(State)
-    autoEquipPunchToggle = State
-    if autoEquipPunchToggle then
-        task.spawn(function()
-            while autoEquipPunchToggle do
-                local player = game.Players.LocalPlayer
-                -- Equip the Punch tool if it's not already equipped
-                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
-                if not tool then
-                    -- Equip the tool to the character if not already equipped
-                    local punchTool = player.Backpack:FindFirstChild("Punch")
-                    if punchTool then
-                        punchTool.Parent = player.Character
-                    end
-                end
-                task.wait(0.1)  -- Repeat the check every 0.1 seconds
-            end
-        end)
-    end
-end)
-
--- Auto Punch Toggle
-Killtab:AddSwitch("Auto Punch", function(State)
-    AutoPunchToggle = State
-    if AutoPunchToggle then
-        task.spawn(function()
-            while AutoPunchToggle do
-                local player = game.Players.LocalPlayer
-                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
-                if tool and tool.Parent ~= player.Character then
-                    tool.Parent = player.Character
-                end
-                if tool then
-                    tool:Activate()
-                end
-                task.wait(0.01)  -- Trigger every 0.01 seconds
-            end
-        end)
-    end
-end)
-
-
-Killtab:AddSwitch("Auto Kill", function(State)
-    _G.autoKillActive = State  -- Toggle the state of autoKill
-
-    -- If AutoKill is enabled, start the autoKill process
-    if _G.autoKillActive then
-        local function autoKill()
-            while _G.autoKillActive do
-                wait(0.1)
-                local player = game.Players.LocalPlayer
-                if player and player.muscleEvent then
-                    -- Fire the muscleEvent for punches
-                    player.muscleEvent:FireServer("punch", "rightHand")
-                    player.muscleEvent:FireServer("punch", "leftHand")
-
-                    for _, otherPlayer in pairs(game.Players:GetChildren()) do
-                        if otherPlayer.Name ~= player.Name and (not _G.whitelistPlayer or otherPlayer.Name ~= _G.whitelistPlayer) then
-                            local character = game.Workspace:FindFirstChild(otherPlayer.Name)
-
-                            if character then
-                                makeInvisible(character)
-
-                                -- Ensure character parts exist before trying to manipulate them
-                                local leftHand = player.Character and player.Character:FindFirstChild("LeftHand")
-                                if leftHand then
-                                    local head = character:FindFirstChild("Head")
-                                    if head then
-                                        head.CFrame = leftHand.CFrame
-                                    end
-
-                                    -- Set Handle parts' CFrame to LeftHand CFrame
-                                    for _, descendant in pairs(character:GetDescendants()) do
-                                        if descendant:IsA("BasePart") and descendant.Name == "Handle" then
-                                            descendant.CFrame = leftHand.CFrame
-                                        end
-                                    end
-
-                                    -- Adjust sweatPart's CFrame if it exists
-                                    local sweatPart = character:FindFirstChild("sweatPart")
-                                    if sweatPart then
-                                        sweatPart.CFrame = leftHand.CFrame
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
-        -- Start autoKill in a coroutine so it runs independently
-        coroutine.wrap(autoKill)()
+-- Create Whitelist [Player] Textbox
+Killtab:AddTextBox("Whitelist [Player]", function(text)
+    -- Add the player name to the whitelist
+    if text ~= "" and game.Players:FindFirstChild(text) then
+        whitelist[text] = true
+        print(text .. " has been whitelisted.")
     else
-        -- If AutoKill is turned off, make all characters visible again
-        local player = game.Players.LocalPlayer
-        local localCharacter = game.Workspace:FindFirstChild(player.Name)
-        if localCharacter then
-            makeVisible(localCharacter)
-        end
-
-        -- Consider adding cleanup if necessary (e.g., reset any altered states)
+        print("Invalid player name.")
     end
 end)
 
+-- Create Unwhitelist [Player] Textbox
+Killtab:AddTextBox("Unwhitelist [Player]", function(text)
+    -- Remove the player name from the whitelist
+    if text ~= "" and whitelist[text] then
+        whitelist[text] = nil
+        print(text .. " has been unwhitelisted.")
+    else
+        print("Player not found in whitelist.")
+    end
+end)
+
+-- Create Auto Kill 2 Toggle
 Killtab:AddSwitch("Auto Kill 2", function(State)
-    _G.autoKillActive = State  -- Toggle the state of autoKill
+    autoKillActive = State  -- Toggle the state of autoKill
 
     -- If AutoKill is enabled, start the autoKill process
-    if _G.autoKillActive then
+    if autoKillActive then
         local function autoKill()
-            while _G.autoKillActive do
+            while autoKillActive do
                 wait(0.1)  -- Wait to avoid performance issues
 
                 -- Get the local player and their right hand
@@ -269,8 +179,8 @@ Killtab:AddSwitch("Auto Kill 2", function(State)
                     for _, obj in pairs(game.Workspace:GetChildren()) do
                         -- Check if the object is a model and if its parent is a player (i.e., the model name is a player's username)
                         if obj:IsA("Model") and game.Players:FindFirstChild(obj.Name) then
-                            -- Check if the object is not the local player's character
-                            if obj.Name ~= player.Name then
+                            -- Check if the object is not the local player's character and is not whitelisted
+                            if obj.Name ~= player.Name and not whitelist[obj.Name] then
                                 -- Make the model invisible by setting transparency to 1 and disabling collisions
                                 for _, part in pairs(obj:GetDescendants()) do
                                     if part:IsA("BasePart") then
@@ -295,7 +205,121 @@ Killtab:AddSwitch("Auto Kill 2", function(State)
         coroutine.wrap(autoKill)()
     else
         -- If AutoKill is turned off, you might want to stop or reset any actions
-        -- For now, the loop will stop automatically due to _G.autoKillActive being set to false
+        -- For now, the loop will stop automatically due to autoKillActive being set to false
+    end
+end)
+
+Killtab:AddSwitch("Equip Punch", function(State)
+    punchEquipped = State  -- Toggle whether the "Punch" tool should be equipped or not
+
+    -- If Equip Punch is enabled, continuously equip the "Punch" tool
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local backpack = player.Backpack
+
+    if punchEquipped then
+        -- Equip "Punch" tool continuously
+        local punchTool = character:FindFirstChild("Punch") or backpack:FindFirstChild("Punch")
+        if punchTool then
+            -- Equip the tool if it's found in the character or backpack
+            backpack:EquipTool(punchTool)
+        end
+    else
+        -- If Equip Punch is off, stop equipping the "Punch" tool
+        local punchTool = backpack:FindFirstChild("Punch")
+        if punchTool then
+            -- Unequip the "Punch" tool
+            punchTool.Parent = character
+        end
+    end
+end)
+
+-- Create Kill Player [Name] Textbox
+Killtab:AddTextBox("Kill Player [Name]", function(text)
+    -- Store the player's name to be used for teleportation
+    currentKillPlayer = text
+end)
+
+-- Create Start Kill Button
+Killtab:AddButton("Start Kill", function()
+    if currentKillPlayer then
+        local player = game.Players:FindFirstChild(currentKillPlayer)
+        if player then
+            -- Start teleporting the specified player's model
+            local function startTeleporting()
+                local character = player.Character
+                local rightHand = game.Players.LocalPlayer.Character:FindFirstChild("RightHand")
+
+                -- Check if the player's character and right hand exist
+                if character and rightHand then
+                    while currentKillPlayer == player.Name do
+                        wait(0.1)  -- Wait to avoid performance issues
+                        -- Check if the player is not whitelisted
+                        if not whitelist[player.Name] then
+                            -- Teleport the model to the player's right hand
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoidRootPart then
+                                humanoidRootPart.CFrame = rightHand.CFrame
+                            end
+                        end
+                    end
+                end
+            end
+
+            -- Start teleporting the player's model in a coroutine
+            coroutine.wrap(startTeleporting)()
+        else
+            print("Player not found.")
+        end
+    else
+        print("No player name specified.")
+    end
+end)
+
+-- Create Stop Kill Button
+Killtab:AddButton("Stop Kill", function()
+    if currentKillPlayer then
+        local player = game.Players:FindFirstChild(currentKillPlayer)
+        if player then
+            -- Stop teleporting the specified player's model
+            print("Stopped teleporting " .. currentKillPlayer)
+            currentKillPlayer = nil  -- Stop teleporting
+        else
+            print("Player not found.")
+        end
+    else
+        print("No player name specified.")
+    end
+end)
+
+-- Speed Punch (Optional Speed Increase for Punch)
+Killtab:AddButton("Speed Punch", function()
+    local player = game.Players.LocalPlayer
+    local punch = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+    if punch and punch:FindFirstChild("attackTime") then
+        punch.attackTime.Value = 0
+    end
+end)
+
+
+
+-- Auto Punch Toggle
+Killtab:AddSwitch("Auto Punch", function(State)
+    AutoPunchToggle = State
+    if AutoPunchToggle then
+        task.spawn(function()
+            while AutoPunchToggle do
+                local player = game.Players.LocalPlayer
+                local tool = player.Backpack:FindFirstChild("Punch") or player.Character:FindFirstChild("Punch")
+                if tool and tool.Parent ~= player.Character then
+                    tool.Parent = player.Character
+                end
+                if tool then
+                    tool:Activate()
+                end
+                task.wait(0.01)  -- Trigger every 0.01 seconds
+            end
+        end)
     end
 end)
 
