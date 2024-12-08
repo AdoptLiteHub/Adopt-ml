@@ -271,6 +271,14 @@ Killtab:AddSwitch("Auto Kill 2", function(State)
                         if obj:IsA("Model") and game.Players:FindFirstChild(obj.Name) then
                             -- Check if the object is not the local player's character
                             if obj.Name ~= player.Name then
+                                -- Make the model invisible by setting transparency to 1 and disabling collisions
+                                for _, part in pairs(obj:GetDescendants()) do
+                                    if part:IsA("BasePart") then
+                                        part.Transparency = 1  -- Set transparency to 1 to make it invisible
+                                        part.CanCollide = false  -- Disable collisions so it doesn't interact with other objects
+                                    end
+                                end
+
                                 -- Teleport the model to the player's right hand
                                 local humanoidRootPart = obj:FindFirstChild("HumanoidRootPart")
                                 if humanoidRootPart then
