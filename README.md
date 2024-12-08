@@ -473,6 +473,23 @@ RebirthTab:AddSwitch("Auto Rebirth", {
     end
 })
 
+Rebirth:AddSwitch("Auto set size 2", function(bool)
+    if bool then
+        -- Start the loop when the switch is turned on
+        while switch:Get() do
+            local args = {
+                [1] = "changeSize",
+                [2] = 2
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("changeSpeedSizeRemote"):InvokeServer(unpack(args))
+            wait(0.1)  -- Wait for a short period before repeating the action
+        end
+    end
+end)
+
+switch:Set(true)  -- Set the switch to true initially
+
+
 RebirthTab:AddTextBox("Select Rebirth Amount", function(text)
     local inputNumber = tonumber(text)
     if inputNumber and inputNumber >= 0 then
