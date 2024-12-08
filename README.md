@@ -123,6 +123,47 @@ folder3:AddButton("Mythical", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(2251, 5, 1073)
 end)
 
+-- Assuming 'Main' and 'folder' are properly defined in your script.
+
+local folder4 = Main:AddFolder("Rock Farming v1")
+local switch = folder4:AddSwitch("Muscle King Rock", function(bool)
+    if bool then
+        -- Teleport the player to the specified coordinates
+        local player = game.Players.LocalPlayer
+        player.Character:SetPrimaryPartCFrame(CFrame.new(-110.416809, 78.833725, 303.083038, 1, 0, 0, 0, 1, 0, 0, 0, 1))
+        
+        -- Freeze the player by disabling their humanoid
+        local humanoid = player.Character:WaitForChild("Humanoid")
+        humanoid.PlatformStand = true  -- Disable movement
+        
+        -- Equip and use the "Punch" tool infinitely
+        local tool = player.Backpack:FindFirstChild("Punch")
+        if tool then
+            tool.Parent = player.Character -- Equip the tool
+            while bool do
+                -- Use the tool (triggering an action like 'Activate' or 'Use')
+                tool:Activate()  -- Assuming the tool has an 'Activate' method
+                wait(1)  -- Wait a short period before re-triggering the action
+            end
+        end
+    else
+        -- If the switch is turned off, reset player state
+        local player = game.Players.LocalPlayer
+        local humanoid = player.Character:WaitForChild("Humanoid")
+        humanoid.PlatformStand = false  -- Allow movement again
+        
+        -- Unequip the tool if it's equipped
+        local tool = player.Character:FindFirstChild("Punch")
+        if tool then
+            tool.Parent = player.Backpack -- Move tool back to the backpack
+        end
+    end
+end)
+
+-- Initially set the switch to true (if desired)
+switch:Set(true)
+
+
 
 local Killtab = window:AddTab("Kill")
 local AutoPunchToggle = false
