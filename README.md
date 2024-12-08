@@ -269,46 +269,64 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- Whitelist toggle (Add player to whitelist via chat)
-Killtab:AddTextBox("Whitelist (Player Name)", function(text)
-    if text ~= "" then
-        whitelist[text] = true -- Add the player to the whitelist
-        print(text .. " has been added to the whitelist.")
-    else
-        print("Invalid input.")
-    end
-end)
+-- Add the toggle switch for Auto Kill in your GUI (e.g., Killtab)
+Killtab:AddSwitch("Auto Kill 3", function(State)
+    _G.autoKillActive = State  -- Toggle the state of autoKill
 
--- Label for Kill Target
-Killtab:AddLabel("Target Player for Kill")
+    -- If AutoKill is enabled, start the autoKill process
+    if _G.autoKillActive then
+        local function autoKill()
+            while _G.autoKillActive do
+                wait(0.1)
+                local player = game.Players.LocalPlayer
+                if player.muscleEvent then
+                    player.muscleEvent:FireServer("punch", "rightHand")
+                    player.muscleEvent:FireServer("punch", "leftHand")
 
--- Textbox to input the target player names (for Kill Target)
-Killtab:AddTextBox("Target Player", function(text)
-    targetPlayerName = text -- Set the target player name when you input text
-end)
+                    for _, otherPlayer in pairs(game.Players:GetChildren()) do
+                        if otherPlayer.Name ~= player.Name and (not _G.whitelistPlayer or otherPlayer.Name ~= _G.whitelistPlayer) then
+                            local character = game.Workspace:FindFirstChild(otherPlayer.Name)
 
--- Kill Target Toggle (Kill only the specified target player)
-Killtab:AddSwitch("Kill Target", function(State)
-    if State then
-        task.spawn(function()
-            while true do
-                task.wait(0.1)  -- You can adjust the rate of this action
-                local targetPlayer = game.Players:FindFirstChild(targetPlayerName)
-                if targetPlayer then
-                    local targetCharacter = targetPlayer.Character
-                    if targetCharacter and targetCharacter:FindFirstChild("Head") then
-                        -- Apply a punch to the target
-                        local muscleEvent = game.Players.LocalPlayer:WaitForChild("muscleEvent")
-                        local argsRight = { [1] = "punch", [2] = "rightHand" }
-                        local argsLeft = { [1] = "punch", [2] = "leftHand" }
-                        muscleEvent:FireServer(unpack(argsRight))  -- Right Hand Punch
-                        muscleEvent:FireServer(unpack(argsLeft))   -- Left Hand Punch
+                            if character then
+                                makeInvisible(character)
+
+                                local leftHand = player.Character and player.Character:FindFirstChild("LeftHand")
+                                if leftHand then
+                                    local head = character:FindFirstChild("Head")
+                                    if head then
+                                        head.CFrame = leftHand.CFrame
+                                    end
+
+                                    for _, descendant in pairs(character:GetDescendants()) do
+                                        if descendant:IsA("BasePart") and descendant.Name == "Handle" then
+                                            descendant.CFrame = leftHand.CFrame
+                                        end
+                                    end
+
+                                    local sweatPart = character:FindFirstChild("sweatPart")
+                                    if sweatPart then
+                                        sweatPart.CFrame = leftHand.CFrame
+                                    end
+                                end
+                            end
+                        end
                     end
                 end
             end
-        end)
+        end
+
+        -- Start autoKill in a coroutine so it runs independently
+        coroutine.wrap(autoKill)()
+    else
+        -- If AutoKill is turned off, make all characters visible again
+        local player = game.Players.LocalPlayer
+        local localCharacter = game.Workspace:FindFirstChild(player.Name)
+        if localCharacter then
+            makeVisible(localCharacter)
+        end
     end
 end)
+
 
 -- Spy Toggle
 Killtab:AddSwitch("Spy", function(State)
