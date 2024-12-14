@@ -381,6 +381,124 @@ Killtab:AddSwitch("Auto Kill [Kill Aura]", function(bool)
     end
 end)
 
+-- Create a function to initialize the invisible ring around the player
+local function createInvisibleRing(player)
+    -- This will create a spherical region (invisible) around the player's character
+    local character = player.Character
+    if character then
+        -- Create an invisible part (ring)
+        local ring = Instance.new("Part")
+        ring.Size = Vector3.new(1000, 1, 1000)  -- Make the ring very large (1000x1000)
+        ring.Shape = Enum.PartType.Ball
+        ring.Position = character.HumanoidRootPart.Position  -- Position it around the player
+        ring.Anchored = true
+        ring.CanCollide = false
+        ring.Transparency = 1  -- Make it invisible
+        ring.Parent = workspace
+        
+        -- This will update the position of the ring to follow the player’s movement
+        game:GetService("RunService").Heartbeat:Connect(function()
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                ring.Position = character.HumanoidRootPart.Position  -- Keep the ring around the player
+            end
+        end)
+
+        return ring
+    end
+end
+
+-- Function to resize hitbox when player enters the ring
+local function enlargeHitbox(player)
+    -- Find all players in the game
+    for _, targetPlayer in pairs(game.Players:GetPlayers()) do
+        if targetPlayer.Character then
+            -- Detect if this player is inside the invisible ring
+            local targetChar = targetPlayer.Character
+            local distance = (targetChar.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+
+            -- Assuming the radius of the ring is 1000 units (half the size of the ring)
+            if distance <= 1000 then
+                -- Make the hitbox 1000 times bigger (scaling the character's humanoid)
+                local humanoid = targetChar:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.BodyWidthScale = 1000  -- Scale width of hitbox by 1000
+                    humanoid.BodyHeightScale = 1000  -- Scale height of hitbox by 1000
+                    humanoid.BodyDepthScale = 1000  -- Scale depth of hitbox by 1000
+                end
+            else
+                -- Reset the hitbox size if the player moves out of the ring
+                local humanoid = targetChar:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.BodyWidthScale = 1  -- Reset width of hitbox
+                    humanoid.BodyHeightScale = 1  -- Reset height of hitbox
+                    humanoid.BodyDepthScale = 1  -- Reset depth of hitbox
+                end
+            end
+        end
+    end
+end
+
+-- Equip and continuously use the "Punch" tool
+local function equipAndUsePunch(player)
+    local character = player.Character
+    if character then
+        -- Find the "Punch" tool in the player's backpack
+        local punchTool = player.Backpack:FindFirstChild("Punch")
+        
+        -- If the tool doesn't exist, create and equip it
+        if not punchTool then
+            punchTool = Instance.new("Tool")
+            punchTool.Name = "Punch"
+            punchTool.RequiresHandle = true
+            punchTool.Parent = player.Backpack
+            
+            -- Create a handle for the tool (required for tools)
+            local handle = Instance.new("Part")
+            handle.Name = "Handle"
+            handle.Size = Vector3.new(1, 5, 1)  -- Set the size of the handle
+            handle.CanCollide = false
+            handle.Anchored = false
+            handle.Parent = punchTool
+            
+            -- Equip the tool
+            player.Backpack:FindFirstChild("Punch")
+        end
+
+        -- Simulate using the Punch tool infinitely
+        game:GetService("RunService").Heartbeat:Connect(function()
+            if punchTool and punchTool.Parent == player.Backpack then
+                -- Fire the tool's activated event (mimicking the player using the tool)
+                if punchTool.Activated then
+                    punchTool.Activated:Fire()
+                end
+            end
+        end)
+    end
+end
+
+-- Toggle function
+Killtab:AddSwitch("Kill Aura V2", function(bool)
+    local player = game.Players.LocalPlayer
+
+    if bool then
+        -- First, equip and use the Punch tool
+        equipAndUsePunch(player)
+
+        -- Then, create the invisible ring around the player and monitor the hitbox changes
+        local ring = createInvisibleRing(player)
+
+        -- Monitor the players around the ring
+        game:GetService("RunService").Heartbeat:Connect(function()
+            if ring then
+                enlargeHitbox(player)  -- Check and resize hitboxes of players around the ring
+            end
+        end)
+    else
+        -- When the toggle is off, you can remove the ring and reset hitboxes if needed
+        -- You might also want to clear any effects if the toggle is disabled
+    end
+end)
+
 
 -- Create Equip Punch Toggle
 Killtab:AddSwitch("Equip Punch", function(State)
