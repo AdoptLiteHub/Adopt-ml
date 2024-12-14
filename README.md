@@ -382,7 +382,7 @@ Killtab:AddSwitch("Auto Kill [Kill Aura]", function(bool)
 end)
 
 local autoKillEnabled = false -- Default to false
-local hitboxSize = 1600-- Set hitbox size to 1600
+local hitboxSize = 600-- Set hitbox size to 600
 
 -- Function to toggle Auto Kill aura
 Killtab:AddSwitch("Auto Kill aura v2", function(bool)
@@ -397,7 +397,7 @@ game:GetService('RunService').RenderStepped:Connect(function()
                     local rootPart = player.Character.HumanoidRootPart
 
                     -- Modify the root part properties for players that are not the local player
-                    rootPart.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize) -- Set hitbox size to 1600
+                    rootPart.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize) -- Set hitbox size to 600
                     rootPart.Transparency = 1 -- Make the red thing invisible
                     rootPart.Color = Color3.new(1, 0, 0)  -- Red color for killable players, but it'll be invisible due to Transparency = 1
                     rootPart.Material = Enum.Material.Neon
