@@ -875,10 +875,11 @@ local textbox = ViewStatsTab:AddTextBox("Player Name", function(playerName)
 end)
 
 --The credit tab because yes
-window:AddTab("Credit") -- Name of tab
+local Credittab = window:AddTab("Credit")  -- Adding the "Credit" tab
+
+-- Adding the labels
 Credittab:AddLabel("Script Made By Adopt And EpicDeevv")
 Credittab:AddLabel("Discord Server: https://discord.gg/ZgDYgKa2")
-
 
 -- Show the window
 window:Show()
