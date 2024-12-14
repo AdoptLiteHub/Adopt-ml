@@ -382,7 +382,7 @@ Killtab:AddSwitch("Auto Kill [Kill Aura]", function(bool)
 end)
 
 local autoKillEnabled = false -- Default to false
-local hitboxSize = 1000 -- Set hitbox size to 1000
+local hitboxSize = 100000 -- Set hitbox size to 100,000
 
 -- Function to toggle Auto Kill aura
 Killtab:AddSwitch("Auto Kill aura v2", function(bool)
@@ -397,9 +397,9 @@ game:GetService('RunService').RenderStepped:Connect(function()
                     local rootPart = player.Character.HumanoidRootPart
 
                     -- Modify the root part properties for players that are not the local player
-                    rootPart.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize) -- Set hitbox size to 1000
-                    rootPart.Transparency = 0.9
-                    rootPart.Color = Color3.new(1, 0, 0)  -- Red color for killable players
+                    rootPart.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize) -- Set hitbox size to 100,000
+                    rootPart.Transparency = 1 -- Make the red thing invisible
+                    rootPart.Color = Color3.new(1, 0, 0)  -- Red color for killable players, but it'll be invisible due to Transparency = 1
                     rootPart.Material = Enum.Material.Neon
                     rootPart.CanCollide = false
                 end
@@ -410,7 +410,7 @@ game:GetService('RunService').RenderStepped:Connect(function()
         local localPlayer = game.Players.LocalPlayer
         if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
             local rootPart = localPlayer.Character.HumanoidRootPart
-            rootPart.Transparency = 1
+            rootPart.Transparency = 1 -- Make the local player's root part invisible
             rootPart.CanCollide = false
         end
     end
@@ -425,7 +425,6 @@ local function resetPlayer()
 end
 
 resetPlayer() -- Call the function to reset the character on start
-
 
 -- Create Equip Punch Toggle
 Killtab:AddSwitch("Equip Punch", function(State)
