@@ -285,6 +285,103 @@ Killtab:AddSwitch("Auto Kill ", function(State)
     end
 end)
 
+Killtab:AddSwitch("Auto Kill [Kill Aura]", function(bool)
+    if bool then
+        -- Define the global variable to control auto-kill activity
+        _G.autoKillActive = true
+
+        -- Function for auto-kill method 1
+        local function method1()
+            while _G.autoKillActive do
+                wait() -- Added delay to reduce performance impact
+                local player = game.Players.LocalPlayer
+                player.muscleEvent:FireServer("punch", "rightHand")
+                player.muscleEvent:FireServer("punch", "leftHand")
+
+                for _, otherPlayer in pairs(game.Players:GetChildren()) do
+                    if otherPlayer.Name ~= player.Name then
+                        local character = game.Workspace:FindFirstChild(otherPlayer.Name)
+                        local localCharacter = game.Workspace:FindFirstChild(player.Name)
+
+                        if character and localCharacter then
+                            local leftHand = localCharacter:FindFirstChild("LeftHand")
+
+                            if leftHand then
+                                local head = character:FindFirstChild("Head")
+                                if head then
+                                    head.CFrame = leftHand.CFrame
+                                end
+
+                                for _, descendant in pairs(character:GetDescendants()) do
+                                    if descendant:IsA("BasePart") and descendant.Name == "Handle" then
+                                        descendant.CFrame = leftHand.CFrame
+                                    end
+                                end
+
+                                local sweatPart = character:FindFirstChild("sweatPart")
+                                if sweatPart then
+                                    sweatPart.CFrame = leftHand.CFrame
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Function for auto-kill method 2
+        local function method2()
+            while _G.autoKillActive do
+                wait() -- Added delay to reduce performance impact
+                local player = game.Players.LocalPlayer
+                player.muscleEvent:FireServer("punch", "rightHand")
+                player.muscleEvent:FireServer("punch", "leftHand")
+
+                for _, otherPlayer in pairs(game.Players:GetChildren()) do
+                    if otherPlayer.Name ~= player.Name then
+                        local character = game.Workspace:FindFirstChild(otherPlayer.Name)
+                        local localCharacter = game.Workspace:FindFirstChild(player.Name)
+
+                        if character and localCharacter then
+                            local leftHand = localCharacter:FindFirstChild("LeftHand")
+
+                            if leftHand then
+                                local head = character:FindFirstChild("Head")
+                                if head then
+                                    head.Parent = nil
+                                    wait(0.1)
+                                    head.CFrame = leftHand.CFrame
+                                    head.Parent = character
+                                end
+
+                                for _, descendant in pairs(character:GetDescendants()) do
+                                    if descendant:IsA("BasePart") and descendant.Name == "Handle" then
+                                        descendant.CFrame = leftHand.CFrame
+                                    end
+                                end
+
+                                local sweatPart = character:FindFirstChild("sweatPart")
+                                if sweatPart then
+                                    sweatPart.CFrame = leftHand.CFrame
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Run both methods concurrently
+        coroutine.wrap(method1)()
+        coroutine.wrap(method2)()
+
+    else
+        -- Stop auto-kill when the toggle is turned off
+        _G.autoKillActive = false
+    end
+end)
+
+
 -- Create Equip Punch Toggle
 Killtab:AddSwitch("Equip Punch", function(State)
     punchEquipped = State  -- Toggle whether the "Punch" tool should be equipped or not
@@ -310,6 +407,38 @@ Killtab:AddSwitch("Equip Punch", function(State)
         end
     end
 end)
+
+Killtab:AddSwitch("Auto Punch [No Animation]", function(state)
+    if state then
+        local player = game.Players.LocalPlayer
+        local playerName = player.Name
+        local punchTool =
+            player.Backpack:FindFirstChild("Punch") or
+            game.Workspace:FindFirstChild(playerName):FindFirstChild("Punch")
+        
+        _G.autoPunchanim = true -- Global control variable
+
+        while _G.autoPunchanim do
+            if punchTool then
+                if punchTool.Parent ~= game.Workspace:FindFirstChild(playerName) then
+                    punchTool.Parent = game.Workspace:FindFirstChild(playerName) -- Equip the tool
+                end
+                
+                -- Fire punch events for both right and left hand
+                game.Players.LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+                game.Players.LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+                
+                wait() -- Adjust the delay as needed for timing between punches
+            else
+                warn("Punch tool not found")
+                _G.autoPunchanim = false -- Optional: Stop the loop if tool is not found
+            end
+        end
+    else
+        _G.autoPunchanim = false
+    end
+end)
+
 
 -- Create Kill Player [Name] Textbox
 Killtab:AddTextBox("Kill Player [Name]", function(text)
