@@ -287,44 +287,6 @@ folder5:AddSwitch("Auto Kill", function(State)
     end
 end)
 
--- Auto Kill Aura Toggle
-folder5:AddSwitch("Auto Kill [Kill Aura]", function(State)
-    if State then
-        -- Function for auto-kill method
-        local function autoKillAura()
-            while autoKillActive do
-                wait(0.1)  -- Added delay to reduce performance impact
-                local player = game.Players.LocalPlayer
-                -- Activate the muscle event for both hands (assuming these are related to attack)
-                player.muscleEvent:FireServer("punch", "rightHand")
-                player.muscleEvent:FireServer("punch", "leftHand")
-
-                for _, otherPlayer in pairs(game.Players:GetChildren()) do
-                    if otherPlayer.Name ~= player.Name then
-                        local character = game.Workspace:FindFirstChild(otherPlayer.Name)
-                        if character then
-                            -- Move certain parts of the character
-                            local leftHand = character:FindFirstChild("LeftHand")
-                            if leftHand then
-                                -- Move the head or handle to the left hand's CFrame
-                                local head = character:FindFirstChild("Head")
-                                if head then
-                                    head.CFrame = leftHand.CFrame
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
-        -- Run the method in a coroutine
-        coroutine.wrap(autoKillAura)()
-    else
-        -- Stop auto-kill when the toggle is turned off
-        autoKillActive = false
-    end
-end)
 
 -- Auto Kill Aura v2 Toggle
 folder5:AddSwitch("Auto Kill Aura v2", function(State)
