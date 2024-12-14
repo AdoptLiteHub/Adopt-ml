@@ -209,8 +209,10 @@ Killtab:AddTextBox("Unwhitelist [Player]", function(text)
     end
 end)
 
+local folder5 = Killtab:AddFolder(Chose the auto kill you want)
+
 -- Create Auto Kill Toggle
-Killtab:AddSwitch("Auto Kill ", function(State)
+folder5:AddSwitch("Auto Kill ", function(State)
     autoKillActive = State  -- Toggle the state of autoKill
 
     -- If AutoKill is enabled, start the autoKill process
@@ -285,7 +287,7 @@ Killtab:AddSwitch("Auto Kill ", function(State)
     end
 end)
 
-Killtab:AddSwitch("Auto Kill [Kill Aura]", function(bool)
+folder5AddSwitch("Auto Kill [Kill Aura]", function(bool)
     if bool then
         -- Define the global variable to control auto-kill activity
         _G.autoKillActive = true
@@ -385,7 +387,7 @@ local autoKillEnabled = false -- Default to false
 local hitboxSize = 600-- Set hitbox size to 600
 
 -- Function to toggle Auto Kill aura
-Killtab:AddSwitch("Auto Kill aura v2", function(bool)
+folder5:AddSwitch("Auto Kill aura v2", function(bool)
     autoKillEnabled = bool
 end)
 
