@@ -209,10 +209,10 @@ Killtab:AddTextBox("Unwhitelist [Player]", function(text)
     end
 end)
 
-local folder5 = Killtab:AddFolder(Chose the auto kill you want)
+local folder5 = Killtab:AddFolder("Choose the Auto Kill you want") -- Folder name should be descriptive
 
--- Create Auto Kill Toggle
-folder5:AddSwitch("Auto Kill ", function(State)
+-- Auto Kill Toggle
+folder5:AddSwitch("Auto Kill", function(State)
     autoKillActive = State  -- Toggle the state of autoKill
 
     -- If AutoKill is enabled, start the autoKill process
@@ -230,7 +230,7 @@ folder5:AddSwitch("Auto Kill ", function(State)
                 if rightHand then
                     -- Iterate through all models in the Workspace
                     for _, obj in pairs(game.Workspace:GetChildren()) do
-                        -- Check if the object is a model and if its parent is a player (i.e., the model name is a player's username)
+                        -- Check if the object is a model and if its parent is a player
                         if obj:IsA("Model") and game.Players:FindFirstChild(obj.Name) then
                             -- Check if the object is not the local player's character and is not whitelisted
                             if obj.Name ~= player.Name and not whitelist[obj.Name] then
@@ -249,8 +249,8 @@ folder5:AddSwitch("Auto Kill ", function(State)
                                 -- Make the model invisible by setting transparency to 1 and disabling collisions
                                 for _, part in pairs(obj:GetDescendants()) do
                                     if part:IsA("BasePart") then
-                                        part.Transparency = 1  -- Set transparency to 1 to make it invisible
-                                        part.CanCollide = false  -- Disable collisions so it doesn't interact with other objects
+                                        part.Transparency = 1
+                                        part.CanCollide = false
                                     end
                                 end
 
@@ -287,42 +287,29 @@ folder5:AddSwitch("Auto Kill ", function(State)
     end
 end)
 
-folder5AddSwitch("Auto Kill [Kill Aura]", function(bool)
-    if bool then
-        -- Define the global variable to control auto-kill activity
-        _G.autoKillActive = true
-
-        -- Function for auto-kill method 1
-        local function method1()
-            while _G.autoKillActive do
-                wait() -- Added delay to reduce performance impact
+-- Auto Kill Aura Toggle
+folder5:AddSwitch("Auto Kill [Kill Aura]", function(State)
+    if State then
+        -- Function for auto-kill method
+        local function autoKillAura()
+            while autoKillActive do
+                wait(0.1)  -- Added delay to reduce performance impact
                 local player = game.Players.LocalPlayer
+                -- Activate the muscle event for both hands (assuming these are related to attack)
                 player.muscleEvent:FireServer("punch", "rightHand")
                 player.muscleEvent:FireServer("punch", "leftHand")
 
                 for _, otherPlayer in pairs(game.Players:GetChildren()) do
                     if otherPlayer.Name ~= player.Name then
                         local character = game.Workspace:FindFirstChild(otherPlayer.Name)
-                        local localCharacter = game.Workspace:FindFirstChild(player.Name)
-
-                        if character and localCharacter then
-                            local leftHand = localCharacter:FindFirstChild("LeftHand")
-
+                        if character then
+                            -- Move certain parts of the character
+                            local leftHand = character:FindFirstChild("LeftHand")
                             if leftHand then
+                                -- Move the head or handle to the left hand's CFrame
                                 local head = character:FindFirstChild("Head")
                                 if head then
                                     head.CFrame = leftHand.CFrame
-                                end
-
-                                for _, descendant in pairs(character:GetDescendants()) do
-                                    if descendant:IsA("BasePart") and descendant.Name == "Handle" then
-                                        descendant.CFrame = leftHand.CFrame
-                                    end
-                                end
-
-                                local sweatPart = character:FindFirstChild("sweatPart")
-                                if sweatPart then
-                                    sweatPart.CFrame = leftHand.CFrame
                                 end
                             end
                         end
@@ -331,64 +318,17 @@ folder5AddSwitch("Auto Kill [Kill Aura]", function(bool)
             end
         end
 
-        -- Function for auto-kill method 2
-        local function method2()
-            while _G.autoKillActive do
-                wait() -- Added delay to reduce performance impact
-                local player = game.Players.LocalPlayer
-                player.muscleEvent:FireServer("punch", "rightHand")
-                player.muscleEvent:FireServer("punch", "leftHand")
-
-                for _, otherPlayer in pairs(game.Players:GetChildren()) do
-                    if otherPlayer.Name ~= player.Name then
-                        local character = game.Workspace:FindFirstChild(otherPlayer.Name)
-                        local localCharacter = game.Workspace:FindFirstChild(player.Name)
-
-                        if character and localCharacter then
-                            local leftHand = localCharacter:FindFirstChild("LeftHand")
-
-                            if leftHand then
-                                local head = character:FindFirstChild("Head")
-                                if head then
-                                    head.Parent = nil
-                                    wait(0.1)
-                                    head.CFrame = leftHand.CFrame
-                                    head.Parent = character
-                                end
-
-                                for _, descendant in pairs(character:GetDescendants()) do
-                                    if descendant:IsA("BasePart") and descendant.Name == "Handle" then
-                                        descendant.CFrame = leftHand.CFrame
-                                    end
-                                end
-
-                                local sweatPart = character:FindFirstChild("sweatPart")
-                                if sweatPart then
-                                    sweatPart.CFrame = leftHand.CFrame
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
-        -- Run both methods concurrently
-        coroutine.wrap(method1)()
-        coroutine.wrap(method2)()
-
+        -- Run the method in a coroutine
+        coroutine.wrap(autoKillAura)()
     else
         -- Stop auto-kill when the toggle is turned off
-        _G.autoKillActive = false
+        autoKillActive = false
     end
 end)
 
-local autoKillEnabled = false -- Default to false
-local hitboxSize = 600-- Set hitbox size to 600
-
--- Function to toggle Auto Kill aura
-folder5:AddSwitch("Auto Kill aura v2", function(bool)
-    autoKillEnabled = bool
+-- Auto Kill Aura v2 Toggle
+folder5:AddSwitch("Auto Kill Aura v2", function(State)
+    autoKillEnabled = State
 end)
 
 game:GetService('RunService').RenderStepped:Connect(function()
@@ -397,11 +337,9 @@ game:GetService('RunService').RenderStepped:Connect(function()
             if player.Name ~= game.Players.LocalPlayer.Name then
                 if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
                     local rootPart = player.Character.HumanoidRootPart
-
                     -- Modify the root part properties for players that are not the local player
-                    rootPart.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize) -- Set hitbox size to 600
-                    rootPart.Transparency = 1 -- Make the red thing invisible
-                    rootPart.Color = Color3.new(1, 0, 0)  -- Red color for killable players, but it'll be invisible due to Transparency = 1
+                    rootPart.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize)  -- Set hitbox size to 600
+                    rootPart.Transparency = 1  -- Make the red thing invisible
                     rootPart.Material = Enum.Material.Neon
                     rootPart.CanCollide = false
                 end
@@ -412,21 +350,23 @@ game:GetService('RunService').RenderStepped:Connect(function()
         local localPlayer = game.Players.LocalPlayer
         if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
             local rootPart = localPlayer.Character.HumanoidRootPart
-            rootPart.Transparency = 1 -- Make the local player's root part invisible
+            rootPart.Transparency = 1  -- Make the local player's root part invisible
             rootPart.CanCollide = false
         end
     end
 end)
 
--- Function to reset the player's character (optional)
+-- Optional function to reset the player's character
 local function resetPlayer()
     local player = game.Players.LocalPlayer
     if player.Character then
-        player.Character:BreakJoints()
+        player.Character:BreakJoints()  -- Break joints to reset the character (if necessary)
     end
 end
 
-resetPlayer() -- Call the function to reset the character on start
+-- Call the function to reset the character (if required by the script's logic)
+resetPlayer()
+
 
 -- Create Equip Punch Toggle
 Killtab:AddSwitch("Equip Punch", function(State)
