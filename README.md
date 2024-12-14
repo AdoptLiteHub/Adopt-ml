@@ -408,37 +408,6 @@ Killtab:AddSwitch("Equip Punch", function(State)
     end
 end)
 
-Killtab:AddSwitch("Auto Punch [No Animation]", function(state)
-    if state then
-        local player = game.Players.LocalPlayer
-        local playerName = player.Name
-        local punchTool =
-            player.Backpack:FindFirstChild("Punch") or
-            game.Workspace:FindFirstChild(playerName):FindFirstChild("Punch")
-        
-        _G.autoPunchanim = true -- Global control variable
-
-        while _G.autoPunchanim do
-            if punchTool then
-                if punchTool.Parent ~= game.Workspace:FindFirstChild(playerName) then
-                    punchTool.Parent = game.Workspace:FindFirstChild(playerName) -- Equip the tool
-                end
-                
-                -- Fire punch events for both right and left hand
-                game.Players.LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
-                game.Players.LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
-                
-                wait() -- Adjust the delay as needed for timing between punches
-            else
-                warn("Punch tool not found")
-                _G.autoPunchanim = false -- Optional: Stop the loop if tool is not found
-            end
-        end
-    else
-        _G.autoPunchanim = false
-    end
-end)
-
 
 -- Create Kill Player [Name] Textbox
 Killtab:AddTextBox("Kill Player [Name]", function(text)
@@ -524,6 +493,37 @@ Killtab:AddSwitch("Auto Punch", function(State)
                 task.wait(0.01)  -- Trigger every 0.01 seconds
             end
         end)
+    end
+end)
+
+Killtab:AddSwitch("Auto Punch [No Animation]", function(state)
+    if state then
+        local player = game.Players.LocalPlayer
+        local playerName = player.Name
+        local punchTool =
+            player.Backpack:FindFirstChild("Punch") or
+            game.Workspace:FindFirstChild(playerName):FindFirstChild("Punch")
+        
+        _G.autoPunchanim = true -- Global control variable
+
+        while _G.autoPunchanim do
+            if punchTool then
+                if punchTool.Parent ~= game.Workspace:FindFirstChild(playerName) then
+                    punchTool.Parent = game.Workspace:FindFirstChild(playerName) -- Equip the tool
+                end
+                
+                -- Fire punch events for both right and left hand
+                game.Players.LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+                game.Players.LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+                
+                wait() -- Adjust the delay as needed for timing between punches
+            else
+                warn("Punch tool not found")
+                _G.autoPunchanim = false -- Optional: Stop the loop if tool is not found
+            end
+        end
+    else
+        _G.autoPunchanim = false
     end
 end)
 
