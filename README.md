@@ -9,58 +9,82 @@ local window = library:AddWindow("Auto Kill Test", {
 local Killing = window:AddTab("Killing")
 
 local autoKillEnabled = false
-local hitboxSize = 5  -- Set the size of the hitbox part to 5
 
--- Function to create and follow a player's character
-local function createFollowPart(player)
-    -- Create a part
-    local followPart = Instance.new("Part")
-    followPart.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize)  -- Set the part size to 5
-    followPart.Transparency = 1  -- Make the part invisible
-    followPart.Material = Enum.Material.SmoothPlastic  -- Set material to SmoothPlastic
-    followPart.CanCollide = false
-    followPart.Anchored = false
-    followPart.Parent = workspace  -- Parent it to the workspace
-
-    -- Create a Weld to attach it to the player's HumanoidRootPart
-    local weld = Instance.new("WeldConstraint")
-    weld.Parent = followPart
-    weld.Part0 = followPart
-    weld.Part1 = player.Character:WaitForChild("HumanoidRootPart")
-
-    -- Update the part's position every frame to follow the player
-    game:GetService('RunService').RenderStepped:Connect(function()
-        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            followPart.CFrame = player.Character.HumanoidRootPart.CFrame  -- Position it at the root part
-        end
-    end)
-
-    return followPart
-end
-
--- Add switch to enable/disable Auto Kill Aura
+-- Create the toggle switch for "Auto Kill"
 Killing:AddSwitch("Auto Kill", function(State)
     autoKillEnabled = State
 end)
 
+-- Function to handle the "Auto Kill" process
 game:GetService('RunService').RenderStepped:Connect(function()
     if autoKillEnabled then
-        -- Iterate through all players and create the follow part for each one
+        -- Iterate through all players in the game
         for _, player in pairs(game:GetService("Players"):GetPlayers()) do
             if player.Name ~= game.Players.LocalPlayer.Name then
-                if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                    -- Create a follow part for each player
-                    if not player.Character:FindFirstChild("FollowPart") then
-                        local followPart = createFollowPart(player)
-                        followPart.Name = "FollowPart"
+                local character = player.Character
+                local localCharacter = game.Players.LocalPlayer.Character
+
+                if character and localCharacter then
+                    local leftHand = localCharacter:FindFirstChild("LeftHand")
+                    local rightHand = localCharacter:FindFirstChild("RightHand")
+
+                    -- Ensure the hands exist and proceed
+                    if leftHand and rightHand then
+                        -- Make the other player's body invisible
+                        for _, part in pairs(character:GetChildren()) do
+                            if part:IsA("BasePart") and part.Name ~= "Head" then
+                                part.Transparency = 1  -- Make the part invisible
+                                part.CanCollide = false  -- Disable collision
+                            end
+                        end
+
+                        -- Remove the head from the other player's character
+                        local head = character:FindFirstChild("Head")
+                        if head then
+                            head.Parent = nil  -- Removes the head from the character
+                        end
+
+                        -- Teleport the other player's body parts to the local player's hands
+                        local newPositionLeft = leftHand.Position
+                        local newPositionRight = rightHand.Position
+
+                        -- Move the body parts to the positions of the local player's hands
+                        for _, part in pairs(character:GetChildren()) do
+                            if part:IsA("BasePart") and part.Name ~= "Head" then
+                                part.CFrame = CFrame.new(newPositionLeft)  -- Move to the left hand
+                                part.CFrame = CFrame.new(newPositionRight)  -- Move to the right hand
+                            end
+                        end
                     end
                 end
+            end
+        end
+
+        -- Now handle the punching logic for the local player
+        local player = game.Players.LocalPlayer
+        local playerName = player.Name
+        local punchTool =
+            player.Backpack:FindFirstChild("Punch") or
+            game.Workspace:FindFirstChild(playerName):FindFirstChild("Punch")
+        _G.autoPunchanim = true -- Global control variable
+
+        while _G.autoPunchanim do
+            if punchTool then
+                if punchTool.Parent ~= game.Workspace:FindFirstChild(playerName) then
+                    punchTool.Parent = game.Workspace:FindFirstChild(playerName) -- Equip the tool
+                end
+                game.Players.LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+                game.Players.LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+                wait() -- Adjust the delay as needed for timing between punches
+            else
+                warn("Punch tool not found")
+                _G.autoPunchanim = false -- Optional: Stop the loop if tool is not found
             end
         end
     end
 end)
 
--- Optional function to reset the player's character
+-- Optional function to reset the player's character (if required)
 local function resetPlayer()
     local player = game.Players.LocalPlayer
     if player.Character then
@@ -68,5 +92,5 @@ local function resetPlayer()
     end
 end
 
--- Call the function to reset the character (if required by the script's logic)
+-- Call the function to reset the character (if required)
 resetPlayer()
