@@ -58,29 +58,32 @@ end)
 local function handleKill(character, localCharacter, targetPlayerName)
     if not character or not localCharacter then return end
 
+    -- Find the player's HumanoidRootPart and your hands
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
     local leftHand = localCharacter:FindFirstChild("LeftHand")
     local rightHand = localCharacter:FindFirstChild("RightHand")
-    if not leftHand or not rightHand then return end
-
-    for _, part in pairs(character:GetChildren()) do
-        if part:IsA("BasePart") and part.Name ~= "Head" then
-            part.Transparency = 1
-            part.CanCollide = false
-        end
-    end
-
     local head = character:FindFirstChild("Head")
+
+    if not humanoidRootPart or not leftHand or not rightHand then return end
+
+    -- Teleport the HumanoidRootPart to your hands
+    humanoidRootPart.CFrame = leftHand.CFrame
+    humanoidRootPart.CFrame = rightHand.CFrame
+
+    -- Remove the head if it exists
     if head then
         head.Parent = nil
     end
 
-    local newPositionLeft = leftHand.Position
-    local newPositionRight = rightHand.Position
+    -- Make the HumanoidRootPart invisible
+    humanoidRootPart.Transparency = 1
+    humanoidRootPart.CanCollide = false
 
+    -- Optionally, make other parts of the character invisible as well
     for _, part in pairs(character:GetChildren()) do
-        if part:IsA("BasePart") and part.Name ~= "Head" then
-            part.CFrame = CFrame.new(newPositionLeft)
-            part.CFrame = CFrame.new(newPositionRight)
+        if part:IsA("BasePart") and part.Name ~= "Head" and part.Name ~= "HumanoidRootPart" then
+            part.Transparency = 1
+            part.CanCollide = false
         end
     end
 end
